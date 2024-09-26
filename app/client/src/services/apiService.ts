@@ -1,3 +1,4 @@
+import { FinancialSubmission } from "../utils/types";
 import { apiAxios } from "./interceptors";
 
 export default {
@@ -10,7 +11,9 @@ export default {
   getHealthCheck() {
     return apiAxios().get("/health-check");
   },
-  getDataTemplate(data: any) {
-    return apiAxios().post("/generate-template", data);
+  getDataTemplate(data: FinancialSubmission) {
+    return apiAxios().post("/generate-template", data, {
+      responseType: "blob",
+    });
   },
 };

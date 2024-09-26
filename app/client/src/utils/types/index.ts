@@ -7,3 +7,12 @@ export type ReportingPeriods = {
   submissionDueDate: string;
   validationDueDate: string;
 };
+
+export type FinancialSubmission = {
+  typeOfInitiative: string;
+  reportingPeriod: string;
+  healthAuthority: string;
+  communitiesNames: string[];
+  initiativeNames: string[];
+  fiscalYear: string;
+};

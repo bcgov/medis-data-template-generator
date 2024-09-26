@@ -187,7 +187,7 @@
           :text="
             isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
           "
-          @click="console.log(selectedPCNCommunity)"
+          @click="mutation.mutate"
         ></v-btn>
       </div>
     </v-container>
@@ -196,7 +196,8 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
+import FileSaver from "file-saver";
 import apiService from "../services/apiService";
 import { periods } from "../utils/enums/application";
 import { RLS } from "../utils/types/rls";
@@ -232,7 +233,7 @@ const isValid = computed(() => {
   );
 });
 
-// Queries
+// tanstack - Queries
 const { isPending, data } = useQuery({
   queryKey: ["health-authority"],
   queryFn: () => apiService.getHealthAuthority(),
@@ -240,6 +241,22 @@ const { isPending, data } = useQuery({
 const { isPending: reportingPeriodsIsPending, data: reportingPeriodsData } = useQuery({
   queryKey: ["reporting-periods"],
   queryFn: () => apiService.getReportingPeriods(),
+});
+const mutation = useMutation({
+  // data sent back is a blob to be saved as a file
+  mutationFn: () =>
+    apiService
+      .getDataTemplate({
+        typeOfInitiative: String(initiative.value),
+        healthAuthority: String(selectedHealthAuthority.value),
+        communitiesNames: selectedPCNCommunity.value,
+        initiativeNames: selectedInitiativeName.value,
+        fiscalYear: String(selectedFiscalYear.value),
+        reportingPeriod: String(selectedPeriod.value),
+      })
+      .then((data) => {
+        FileSaver.saveAs(data.data, "output.xlsm");
+      }),
 });
 
 // Effects

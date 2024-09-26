@@ -1,7 +1,6 @@
 import { createMemoryHistory, createRouter } from "vue-router";
 import GenerateTemplate from "./views/GenerateTemplate.vue";
 import ReplaceTemplate from "./views/ReplaceTemplate.vue";
-// @ts-expect-error nprogress has no types
 import NProgress from "nprogress";
 import Home from "./views/Home.vue";
 
@@ -72,7 +71,9 @@ router.beforeEach((to, from, next) => {
   // }
 
   // Update document title if applicable
-  document.title = to.meta.title ? to.meta.title : import.meta.env.VITE_TITLE;
+  document.title = to.meta.title
+    ? to.meta.title
+    : import.meta.env.VITE_TITLE || "MEDIS Data Template Generator";
   next();
 });
 
