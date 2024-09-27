@@ -22,7 +22,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createMemoryHistory("/"),
+  history: createMemoryHistory(import.meta.env.VITE_BASE_PATH || "/app"),
   routes,
 });
 

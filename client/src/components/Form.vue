@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container fluid>
-      <div>
+      <div v-if="!isPending && !reportingPeriodsIsPending">
         <div class="d-flex">
           <h6>Select the type of Initiative</h6>
           <span class="text-danger ml-1 mb-2 font-weight-bold">*</span>
@@ -23,7 +23,7 @@
       </div>
 
       <v-row gap>
-        <v-col v-if="initiative !== null">
+        <v-col v-if="initiative !== null" cols="4">
           <div class="d-flex">
             <h6>Health Authority</h6>
             <span class="text-danger ml-1 mb-2 font-weight-bold">*</span>
@@ -46,7 +46,7 @@
             clearable
           ></v-autocomplete>
         </v-col>
-        <v-col v-if="initiative !== null">
+        <v-col v-if="initiative !== null" cols="4">
           <div class="d-flex">
             <h6>PCN Community</h6>
             <span class="text-danger ml-1 mb-2 font-weight-bold">*</span>
@@ -87,7 +87,7 @@
           ></v-autocomplete>
         </v-col>
         <!-- Select PCN/UPCC/CHC Name -->
-        <v-col v-if="initiative !== null">
+        <v-col v-if="initiative !== null && initiative !== 'pcn'">
           <div class="d-flex">
             <h6>{{ String(initiative).toUpperCase() }} Name</h6>
             <span class="text-danger ml-1 mb-2 font-weight-bold">*</span>
@@ -179,7 +179,19 @@
           ></v-select>
         </v-col>
       </v-row>
-      <div class="d-flex flex-column w-25">
+      <div class="d-flex flex-row w-25">
+        <!-- <v-btn
+          class="mr-2"
+          :color="isValid ? 'secondary' : 'grey-lighten-1'"
+          variant="flat"
+          :readonly="isPending || !isValid"
+          :text="
+            isPending || reportingPeriodsIsPending
+              ? 'Loading...'
+              : 'Create Mappings (DEV only)'
+          "
+          @click="mappingMutation.mutate"
+        ></v-btn> -->
         <v-btn
           :color="isValid ? 'primary' : 'grey-lighten-1'"
           variant="flat"
@@ -227,7 +239,7 @@ const isValid = computed(() => {
   return (
     selectedHealthAuthority.value &&
     selectedPCNCommunity.value.length > 0 &&
-    selectedInitiativeName.value.length > 0 &&
+    (initiative.value === "pcn" || selectedInitiativeName.value.length > 0) &&
     selectedFiscalYear.value &&
     selectedPeriod.value
   );
@@ -256,6 +268,22 @@ const mutation = useMutation({
       })
       .then((data) => {
         FileSaver.saveAs(data.data, "output.xlsm");
+      }),
+});
+const mappingMutation = useMutation({
+  // data sent back is a blob to be saved as a file
+  mutationFn: () =>
+    apiService
+      .getMappings({
+        typeOfInitiative: String(initiative.value),
+        healthAuthority: String(selectedHealthAuthority.value),
+        communitiesNames: selectedPCNCommunity.value,
+        initiativeNames: selectedInitiativeName.value,
+        fiscalYear: String(selectedFiscalYear.value),
+        reportingPeriod: String(selectedPeriod.value),
+      })
+      .then((data) => {
+        console.log(data);
       }),
 });
 

@@ -16,4 +16,7 @@ export default {
       responseType: "blob",
     });
   },
+  getMappings(data: FinancialSubmission) {
+    return apiAxios().post("/generate-template/create-mappings", data);
+  },
 };

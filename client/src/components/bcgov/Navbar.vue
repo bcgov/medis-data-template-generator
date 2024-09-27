@@ -41,12 +41,12 @@ defineProps({
         </li> -->
         <li>
           <RouterLink data-cy="GenerateTemplateLinks" to="/financial">
-            Generate Financial Templates
+            Generate Financial Template
           </RouterLink>
         </li>
         <li>
           <RouterLink data-cy="ReplaceBaseTemplate" to="/replace">
-            Replace Template
+            Replace Templates
           </RouterLink>
         </li>
         <!-- <li v-if="hasPrivileges">

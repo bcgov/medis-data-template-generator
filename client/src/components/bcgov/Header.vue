@@ -41,7 +41,7 @@ const props = defineProps({
       </h2>
       <v-spacer />
       <v-btn id="loginButton" color="white" density="default" variant="outlined">
-        <span>Logout</span>
+        <span>DEV</span>
       </v-btn>
     </v-toolbar>
   </header>

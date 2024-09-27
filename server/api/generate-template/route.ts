@@ -1,9 +1,10 @@
 import * as express from "express";
-import * as controller from "./controller";
+import controller from "./controller";
 
 const router = express.Router();
 
 router.get("/", controller.generateTemplate);
 router.post("/", controller.generateTemplate);
+router.post("/create-mappings", controller.createMappings);
 
 export default router;

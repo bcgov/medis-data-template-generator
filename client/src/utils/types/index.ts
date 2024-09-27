@@ -8,7 +8,15 @@ export type ReportingPeriods = {
   validationDueDate: string;
 };
 
-export type FinancialSubmission = {
+export type PCNFinancialSubmission = {
+  typeOfInitiative: string;
+  reportingPeriod: string;
+  healthAuthority: string;
+  communitiesNames: string[];
+  fiscalYear: string;
+};
+
+export type OtherFinancialSubmission = {
   typeOfInitiative: string;
   reportingPeriod: string;
   healthAuthority: string;
@@ -16,3 +24,7 @@ export type FinancialSubmission = {
   initiativeNames: string[];
   fiscalYear: string;
 };
+
+export type FinancialSubmission =
+  | PCNFinancialSubmission
+  | OtherFinancialSubmission;
