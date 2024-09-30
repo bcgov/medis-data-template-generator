@@ -5,6 +5,7 @@ import { FinancialSubmission } from "../../interfaces/FinancialSubmission";
 
 import { Request, Response } from "express";
 import ChefsService from "../components/chefsService";
+import mapping from "../utils/mapping";
 
 export default {
   generateTemplate: async (req: Request, res: Response, next: any) => {
@@ -79,10 +80,26 @@ export default {
           data
         );
 
-      res.status(200).send({
-        budgets: budgetData,
-        reporting: reportingData,
-      });
+      const budgetToFinancials = mapping.mapBudgetAndFinancialSubmissions(
+        budgetData as any[],
+        reportingData as any[],
+        "pcn"
+      );
+
+      const budgetsToFinancialItems = budgetToFinancials.map(
+        (budgetFin: any) => {
+          if (budgetFin.reporting.length === 0) {
+            return [];
+          }
+
+          return mapping.mapFinancialItems(
+            budgetFin.budget,
+            budgetFin.reporting[0]
+          );
+        }
+      );
+
+      res.status(200).send(budgetsToFinancialItems);
     } catch (error) {
       console.error("Error creating mappings", error);
       res.status(500).send("Internal Server Error");

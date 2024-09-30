@@ -1,4 +1,4 @@
-import { createMemoryHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 import GenerateTemplate from "./views/GenerateTemplate.vue";
 import ReplaceTemplate from "./views/ReplaceTemplate.vue";
 import NProgress from "nprogress";
@@ -22,7 +22,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createMemoryHistory(import.meta.env.VITE_BASE_PATH || "/app"),
+  history: createWebHistory(import.meta.env.VITE_BASE_PATH || "/app"),
   routes,
 });
 

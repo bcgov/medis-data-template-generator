@@ -180,7 +180,7 @@
         </v-col>
       </v-row>
       <div class="d-flex flex-row w-25">
-        <!-- <v-btn
+        <v-btn
           class="mr-2"
           :color="isValid ? 'secondary' : 'grey-lighten-1'"
           variant="flat"
@@ -191,7 +191,7 @@
               : 'Create Mappings (DEV only)'
           "
           @click="mappingMutation.mutate"
-        ></v-btn> -->
+        ></v-btn>
         <v-btn
           :color="isValid ? 'primary' : 'grey-lighten-1'"
           variant="flat"
