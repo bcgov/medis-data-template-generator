@@ -1,31 +1,19 @@
 import { FinancialSubmission } from "../../interfaces/FinancialSubmission";
+import env from "../utils/env";
 
 export default function ChefsService() {
-  const SERVICE = "CHEFS";
-  const apiUrl = process.env.CHEFS_API_URL;
-  const credentials = {
-    fiscalYearReportingDatesFormId:
-      process.env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID,
-    fiscalYearReportingDatesApiKey:
-      process.env.CHEFS_FISCAL_YEAR_REPORTING_DATES_API_KEY,
-    pcnBudgetFormId: process.env.CHEFS_PCN_BUDGET_FORM_ID,
-    pcnBudgetApiKey: process.env.CHEFS_PCN_BUDGET_API_KEY,
-    pcnFinancialFormId: process.env.CHEFS_PCN_FINANCIAL_FORM_ID,
-    pcnFinancialApiKey: process.env.CHEFS_PCN_FINANCIAL_API_KEY,
-  };
-
   const getReportingPeriod = async () => {
     try {
       const fields = "fiscalYear,periodReportingDates";
-      const url = `${apiUrl}/forms/${credentials.fiscalYearReportingDatesFormId}/submissions?deleted=false&draft=false&fields=${fields}`;
+      const url = `${env.CHEFS_API_URL}/forms/${env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID}/submissions?deleted=false&draft=false&fields=${fields}`;
       const response = await fetch(url, {
         headers: {
           Authorization:
             "Basic " +
             btoa(
-              credentials.fiscalYearReportingDatesFormId +
+              env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID +
                 ":" +
-                credentials.fiscalYearReportingDatesApiKey
+                env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID
             ),
         },
       }).then((res) => res.json());
@@ -42,14 +30,16 @@ export default function ChefsService() {
   ) => {
     switch (data.typeOfInitiative) {
       case "pcn":
-        const fields = "fiscalYear,pcnBudget,communityName";
-        const url = `${apiUrl}/forms/${credentials.pcnBudgetFormId}/submissions?deleted=false&draft=false&fields=${fields}`;
-        const response = await fetch(url, {
+        const pcnFields = "fiscalYear,pcnBudget,communityName";
+        const pcnUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_PCN_BUDGET_FORM_ID}/submissions?deleted=false&draft=false&fields=${pcnFields}`;
+        const pcnResponse = await fetch(pcnUrl, {
           headers: {
             Authorization:
               "Basic " +
               btoa(
-                credentials.pcnBudgetFormId + ":" + credentials.pcnBudgetApiKey
+                env.CHEFS_PCN_BUDGET_FORM_ID +
+                  ":" +
+                  env.CHEFS_PCN_BUDGET_API_KEY
               ),
           },
         })
@@ -61,7 +51,7 @@ export default function ChefsService() {
 
         const budgets = data.communitiesNames
           .map((community) =>
-            response.find(
+            pcnResponse.find(
               (budget: any) =>
                 budget.communityName === community &&
                 budget.fiscalYear === data.fiscalYear
@@ -70,11 +60,98 @@ export default function ChefsService() {
           .filter((budget: any) => budget);
         return budgets;
       case "upcc":
-        return {};
+        const upccFields =
+          "healthAuthority,communityName,upccName,fiscalYear,upccBudget";
+        const upccUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_UPCC_BUDGET_FORM_ID}/submissions?deleted=false&draft=false&fields=${upccFields}`;
+        const upccResponse = await fetch(upccUrl, {
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(
+                env.CHEFS_UPCC_BUDGET_FORM_ID +
+                  ":" +
+                  env.CHEFS_UPCC_BUDGET_API_KEY
+              ),
+          },
+        })
+          .then((res) => res.json())
+          .catch((error) => {
+            console.error("Error fetching budget submission", error);
+            throw new Error("Error fetching budget submission");
+          });
+        const upccBudgets = data.initiativeNames
+          .map((initiativeName) =>
+            upccResponse.find(
+              (budget: any) =>
+                budget.upccName === initiativeName &&
+                data.communitiesNames.includes(budget.communityName) &&
+                budget.fiscalYear === data.fiscalYear
+            )
+          )
+          .filter((budget: any) => budget);
+        return upccBudgets;
       case "nppcc":
-        return {};
+        const nppccFields =
+          "healthAuthority,communityName,nppccName,fiscalYear,nppccBudget";
+        const nppccUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_NPPCC_BUDGET_FORM_ID}/submissions?deleted=false&draft=false&fields=${nppccFields}`;
+        const nppccResponse = await fetch(nppccUrl, {
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(
+                env.CHEFS_NPPCC_BUDGET_FORM_ID +
+                  ":" +
+                  env.CHEFS_NPPCC_BUDGET_API_KEY
+              ),
+          },
+        })
+          .then((res) => res.json())
+          .catch((error) => {
+            console.error("Error fetching budget submission", error);
+            throw new Error("Error fetching budget submission");
+          });
+        const nppccBudgets = data.initiativeNames
+          .map((initiativeName) =>
+            nppccResponse.find(
+              (budget: any) =>
+                budget.nppccName === initiativeName &&
+                data.communitiesNames.includes(budget.communityName) &&
+                budget.fiscalYear === data.fiscalYear
+            )
+          )
+          .filter((budget: any) => budget);
+        return nppccBudgets;
       case "chc":
-        return {};
+        const chcFields =
+          "healthAuthority,communityName,chcName,fiscalYear,chcBudget";
+        const chcUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_CHC_BUDGET_FORM_ID}/submissions?deleted=false&draft=false&fields=${chcFields}`;
+        const chcResponse = await fetch(chcUrl, {
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(
+                env.CHEFS_CHC_BUDGET_FORM_ID +
+                  ":" +
+                  env.CHEFS_CHC_BUDGET_API_KEY
+              ),
+          },
+        })
+          .then((res) => res.json())
+          .catch((error) => {
+            console.error("Error fetching budget submission", error);
+            throw new Error("Error fetching budget submission");
+          });
+        const chcBudgets = data.initiativeNames
+          .map((initiativeName) =>
+            chcResponse.find(
+              (budget: any) =>
+                budget.chcName === initiativeName &&
+                data.communitiesNames.includes(budget.communityName) &&
+                budget.fiscalYear === data.fiscalYear
+            )
+          )
+          .filter((budget: any) => budget);
+        return chcBudgets;
       default:
         throw new Error("Invalid type of initiative");
     }
@@ -85,17 +162,17 @@ export default function ChefsService() {
   ) => {
     switch (data.typeOfInitiative) {
       case "pcn":
-        const fields =
+        const pcnFields =
           "healthAuthority,communityName,fiscalYear,periodReported,financialData";
-        const url = `${apiUrl}/forms/${credentials.pcnFinancialFormId}/submissions?deleted=false&draft=false&fields=${fields}`;
-        const response = await fetch(url, {
+        const pcnUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_PCN_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${pcnFields}`;
+        const pcnResponse = await fetch(pcnUrl, {
           headers: {
             Authorization:
               "Basic " +
               btoa(
-                credentials.pcnFinancialFormId +
+                env.CHEFS_PCN_FINANCIAL_FORM_ID +
                   ":" +
-                  credentials.pcnFinancialApiKey
+                  env.CHEFS_PCN_FINANCIAL_API_KEY
               ),
           },
         })
@@ -107,27 +184,130 @@ export default function ChefsService() {
             );
             throw new Error("Error fetching financial reporting submission");
           });
-
-        console.log("response", response);
-        const reportings = data.communitiesNames
+        const pcnReports = data.communitiesNames
           .map((community) => {
-            return response.find((submission: any) => {
+            return pcnResponse.find((submission: any) => {
               return (
                 submission.communityName === community &&
                 submission.fiscalYear === data.fiscalYear &&
                 submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1])
+                  Number(data.reportingPeriod.split("P")[1]) - 1
               );
             });
           })
           .filter((submission: any) => submission);
-        return reportings;
+        return pcnReports;
       case "upcc":
-        return {};
+        const upccFields =
+          "healthAuthority,communityName,upccName,fiscalYear,periodReported,financialData";
+        const upccUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_UPCC_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${upccFields}`;
+        const upccResponse = await fetch(upccUrl, {
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(
+                env.CHEFS_UPCC_FINANCIAL_FORM_ID +
+                  ":" +
+                  env.CHEFS_UPCC_FINANCIAL_API_KEY
+              ),
+          },
+        })
+          .then((res) => res.json())
+          .catch((error) => {
+            console.error(
+              "Error fetching financial reporting submission",
+              error
+            );
+            throw new Error("Error fetching financial reporting submission");
+          });
+        const upccReports = data.initiativeNames
+          .map((initiativeName) => {
+            return upccResponse.find((submission: any) => {
+              return (
+                submission.upccName === initiativeName &&
+                data.communitiesNames.includes(submission.communityName) &&
+                submission.fiscalYear === data.fiscalYear &&
+                submission.periodReported ===
+                  Number(data.reportingPeriod.split("P")[1]) - 1
+              );
+            });
+          })
+          .filter((submission: any) => submission);
+        return upccReports;
       case "nppcc":
-        return {};
+        const nppccFields =
+          "healthAuthority,communityName,nppccName,fiscalYear,periodReported,financialData";
+        const nppccUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_NPPCC_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${nppccFields}`;
+        const nppccResponse = await fetch(nppccUrl, {
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(
+                env.CHEFS_NPPCC_FINANCIAL_FORM_ID +
+                  ":" +
+                  env.CHEFS_NPPCC_FINANCIAL_API_KEY
+              ),
+          },
+        })
+          .then((res) => res.json())
+          .catch((error) => {
+            console.error(
+              "Error fetching financial reporting submission",
+              error
+            );
+            throw new Error("Error fetching financial reporting submission");
+          });
+        const nppccReports = data.initiativeNames
+          .map((initiativeName) => {
+            return nppccResponse.find((submission: any) => {
+              return (
+                submission.nppccName === initiativeName &&
+                data.communitiesNames.includes(submission.communityName) &&
+                submission.fiscalYear === data.fiscalYear &&
+                submission.periodReported ===
+                  Number(data.reportingPeriod.split("P")[1]) - 1
+              );
+            });
+          })
+          .filter((submission: any) => submission);
+        return nppccReports;
       case "chc":
-        return {};
+        const chcFields =
+          "healthAuthority,communityName,chcName,fiscalYear,periodReported,financialData";
+        const chcUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_CHC_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${chcFields}`;
+        const chcResponse = await fetch(chcUrl, {
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(
+                env.CHEFS_CHC_FINANCIAL_FORM_ID +
+                  ":" +
+                  env.CHEFS_CHC_FINANCIAL_API_KEY
+              ),
+          },
+        })
+          .then((res) => res.json())
+          .catch((error) => {
+            console.error(
+              "Error fetching financial reporting submission",
+              error
+            );
+            throw new Error("Error fetching financial reporting submission");
+          });
+        const chcReports = data.initiativeNames
+          .map((initiativeName) => {
+            return chcResponse.find((submission: any) => {
+              return (
+                submission.chcName === initiativeName &&
+                data.communitiesNames.includes(submission.communityName) &&
+                submission.fiscalYear === data.fiscalYear &&
+                submission.periodReported ===
+                  Number(data.reportingPeriod.split("P")[1]) - 1
+              );
+            });
+          })
+          .filter((submission: any) => submission);
+        return chcReports;
       default:
         throw new Error("Invalid type of initiative");
     }

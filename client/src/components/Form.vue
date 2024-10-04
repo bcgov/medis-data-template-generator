@@ -157,7 +157,7 @@
         <!-- Reporting Period -->
         <v-col v-if="initiative !== null" cols="4">
           <div class="d-flex">
-            <h6>Period Reported</h6>
+            <h6>Reporting Period</h6>
             <span class="text-danger ml-1 mb-2 font-weight-bold">*</span>
             <v-icon
               color="dark-grey"
