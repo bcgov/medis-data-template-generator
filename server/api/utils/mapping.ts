@@ -71,7 +71,6 @@ export default {
     const iterate = (obj: any) => {
       Object.keys(obj).forEach((key) => {
         if (key === "financials") {
-          console.log("Found Financials ", obj[key]);
           financials.push(...obj[key]);
         }
 

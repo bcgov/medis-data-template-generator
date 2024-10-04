@@ -16,7 +16,6 @@ export default {
   generateTemplate: async (req: Request, res: Response, next: any) => {
     try {
       // logs out data from the request
-      console.log("Request Body ", req.body);
       const data: FinancialSubmission = req.body;
 
       const budgetData =
@@ -55,8 +54,6 @@ export default {
         })
         .flat(1);
 
-      console.log("Budgets to Financial Items ", budgetsToFinancialItems);
-
       /* generate workbook object from XLSX file */
       XlsxPopulate.fromFileAsync(__dirname + process.env.TEMPLATE_ROUTE)
         .then((workbook: Workbook) => {
@@ -92,7 +89,6 @@ export default {
   },
   createMappings: async (req: Request, res: Response) => {
     try {
-      console.log("Request Body ", req.body);
       // check if body satisfy the FinancialSubmission interface
       const data: FinancialSubmission = req.body;
 
