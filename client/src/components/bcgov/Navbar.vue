@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { storeToRefs } from 'pinia';
 // import { computed } from 'vue';
-// import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from "../../stores/authStore";
 // import { useFormStore } from '~/store/form';
 // import { useIdpStore } from '~/store/identityProviders';
 
@@ -12,21 +12,12 @@ defineProps({
   },
 });
 
-// const idpStore = useIdpStore();
-
-// const { authenticated, /*isAdmin,*/ identityProvider } = storeToRefs(
-//   useAuthStore()
-// );
-// const { lang } = storeToRefs(useFormStore());
-
-// const hasPrivileges = computed(() => {
-//   return idpStore.isPrimary(identityProvider?.value?.code);
-// });
+const authStore = useAuthStore();
 </script>
 
 <template>
   <nav
-    v-if="!formSubmitMode"
+    v-if="!formSubmitMode && authStore.authenticated"
     class="elevation-4 navigation-main d-print-none px-md-16 px-4"
   >
     <div class="nav-holder container">
@@ -39,6 +30,9 @@ defineProps({
             >{{ $t('trans.bCGovNavBar.about') }}</router-link
           >
         </li> -->
+        <li>
+          <RouterLink data-cy="GenerateTemplateLinks" to="/"> Instructions </RouterLink>
+        </li>
         <li>
           <RouterLink data-cy="GenerateTemplateLinks" to="/financial">
             Generate Financial Template

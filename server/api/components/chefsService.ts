@@ -6,6 +6,7 @@ export default function ChefsService() {
     try {
       const fields = "fiscalYear,periodReportingDates";
       const url = `${env.CHEFS_API_URL}/forms/${env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID}/submissions?deleted=false&draft=false&fields=${fields}`;
+
       const response = await fetch(url, {
         headers: {
           Authorization:
@@ -13,10 +14,15 @@ export default function ChefsService() {
             btoa(
               env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID +
                 ":" +
-                env.CHEFS_FISCAL_YEAR_REPORTING_DATES_FORM_ID
+                env.CHEFS_FISCAL_YEAR_REPORTING_DATES_API_KEY
             ),
         },
-      }).then((res) => res.json());
+      })
+        .then((res) => res.json())
+        .catch((error) => {
+          console.error("Error fetching budget submission", error);
+          throw new Error("Error fetching budget submission");
+        });
 
       return response;
     } catch (error) {

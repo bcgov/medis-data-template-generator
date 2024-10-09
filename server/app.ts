@@ -4,6 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 
 import * as middlewares from "./middlewares/common";
+import { protectMiddleware } from "./middlewares/jwt";
 import router from "./api/routes";
 
 require("dotenv").config();
@@ -30,7 +31,7 @@ app.set("trust proxy", "loopback, linklocal, uniquelocal");
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use("/api", router);
+app.use("/api", protectMiddleware, router);
 
 app.use((req, res) => {
   if (req.originalUrl.startsWith(`${process.env.API_BASEPATH}/api`)) {

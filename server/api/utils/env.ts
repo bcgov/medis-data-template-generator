@@ -25,4 +25,5 @@ export default {
   PORT: process.env.PORT,
   ENVIRONMENT: process.env.ENVIRONMENT,
   TEMPLATE_ROUTE: process.env.TEMPLATE_ROUTE,
+  JWKS_URI: process.env.JWKS_URI,
 };

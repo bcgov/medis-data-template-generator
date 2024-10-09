@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BCLogo from "../../assets/images/bc_logo.svg";
+import { useAuthStore } from "../../stores/authStore";
 
 const props = defineProps({
   appTitle: {
@@ -7,6 +8,9 @@ const props = defineProps({
     default: "MEDIS Data Template Generator",
   },
 });
+
+const authStore = useAuthStore();
+const environment = import.meta.env.VITE_ENVIRONMENT || "local";
 </script>
 
 <template>
@@ -39,9 +43,17 @@ const props = defineProps({
       >
         {{ props.appTitle }}
       </h2>
+      <sup class="font-weight-bold text-uppercase ml-1 sup">{{ environment }}</sup>
       <v-spacer />
-      <v-btn id="loginButton" color="white" density="default" variant="outlined">
-        <span>LOCAL</span>
+      <v-btn
+        id="loginButton"
+        color="white"
+        density="default"
+        variant="outlined"
+        v-if="authStore.authenticated"
+        @click="authStore.logout()"
+      >
+        <span>Logout</span>
       </v-btn>
     </v-toolbar>
   </header>
@@ -54,6 +66,10 @@ const props = defineProps({
   .elevation-20 {
     box-shadow: 0 0 0 0 !important;
   }
+}
+
+.sup {
+  color: #fcba19 !important;
 }
 
 .gov-header {

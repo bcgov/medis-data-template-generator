@@ -7,6 +7,7 @@ import type {
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
 } from "axios";
+import { useAuthStore } from "../stores/authStore";
 
 // Axios serializes query params and encodes spaces with '+'
 // Some external APIs may require spaces to be encoded with '%20 instead
@@ -48,6 +49,16 @@ export function appAxios(options: AxiosRequestConfig = {}): AxiosInstance {
 }
 
 export function apiAxios(options: AxiosRequestConfig = {}): AxiosInstance {
+  const store = useAuthStore();
+
+  if (store.authenticated) {
+    options.headers = {
+      Authorization: `Bearer ${store.user.token}`,
+    };
+  } else {
+    throw new Error("User is not authenticated");
+  }
+
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "/api",
     timeout: 10000,
