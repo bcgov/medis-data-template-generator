@@ -19,4 +19,7 @@ export default {
   getMappings(data: FinancialSubmission) {
     return apiAxios().post("/generate-template/create-mappings", data);
   },
+  getRole() {
+    return apiAxios().get("/role");
+  },
 };

@@ -82,6 +82,8 @@ export default {
 
     iterate(reportingData);
 
+    // console.log(financials);
+
     // If there is a submission but there are no financials associated with the budget, return the period so signify there is a submission.
     const budgetToFinancials = budgetData.map((budget: any) => {
       return {
@@ -90,6 +92,10 @@ export default {
           communityName: reportingSubmission.communityName,
           fiscalYear: reportingSubmission.fiscalYear,
           periodReported: reportingSubmission.periodReported,
+          initiativeName:
+            initiative !== "pcn"
+              ? reportingSubmission[`${initiative}Name`]
+              : "",
         },
         budget: budget,
         reporting: financials

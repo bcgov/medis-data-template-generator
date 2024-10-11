@@ -3,9 +3,11 @@ import Form from "../components/Form.vue";
 </script>
 
 <template>
-  <v-card title="Download financial budget & reporting data">
-    <Form />
-  </v-card>
+  <div class="container mx-auto my-4">
+    <v-card title="Download financial budget & reporting data">
+      <Form />
+    </v-card>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

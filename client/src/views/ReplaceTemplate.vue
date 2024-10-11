@@ -1,11 +1,13 @@
 <template>
-  <div>
-    <v-card title="Replace Uploaded Templates" class="container mx-auto my-4">
-      <h1>Replace Data Template</h1>
+  <div class="container mx-auto my-4">
+    <v-card title="Replace Uploaded Templates">
+      <ReplaceTemplate />
     </v-card>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import ReplaceTemplate from "../components/ReplaceTemplate.vue";
+</script>
 
 <style scoped></style>

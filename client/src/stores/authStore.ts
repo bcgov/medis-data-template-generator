@@ -11,6 +11,7 @@ export const useAuthStore = defineStore({
         username: "",
         token: "",
         refToken: "",
+        role: "",
       },
     };
   },
@@ -30,6 +31,11 @@ export const useAuthStore = defineStore({
         this.user.refToken = keycloak.refreshToken;
       }
     },
+    // Update role
+    updateRole(role: string) {
+      this.user.role = role;
+    },
+    // Login user
     async login() {
       try {
         const keycloak = await keycloakService.CallLogin();
@@ -63,6 +69,7 @@ export const useAuthStore = defineStore({
         username: "",
         token: "",
         refToken: "",
+        role: "",
       };
     },
   },

@@ -5,7 +5,7 @@ const store = useAuthStore();
 
 <template>
   <v-container fluid v-if="store.authenticated">
-    <h2>PLACEHOLDER INSTRUCTIONS</h2>
+    <h2>PLACEHOLDER TO REPLACE TEMPLATE!</h2>
   </v-container>
 </template>
 

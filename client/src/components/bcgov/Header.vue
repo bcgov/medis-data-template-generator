@@ -46,6 +46,16 @@ const environment = import.meta.env.VITE_ENVIRONMENT || "local";
       <sup class="font-weight-bold text-uppercase ml-1 sup">{{ environment }}</sup>
       <v-spacer />
       <v-btn
+        class="mr-1"
+        id="roleButton"
+        color="secondary"
+        variant="plain"
+        v-if="authStore.authenticated"
+        readonly
+      >
+        ({{ environment }}) Role: {{ authStore.user.role }}
+      </v-btn>
+      <v-btn
         id="loginButton"
         color="white"
         density="default"

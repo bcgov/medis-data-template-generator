@@ -63,7 +63,7 @@ async function init() {
       if (!expiredTokenInterval) {
         expiredTokenInterval = setInterval(() => {
           updateToken(60);
-        }, 10000);
+        }, 7000);
       }
       updateToken(60);
     };
@@ -136,12 +136,22 @@ async function refreshToken() {
   }
 }
 
+async function parseToken() {
+  try {
+    return keycloak.tokenParsed;
+  } catch (error) {
+    console.error("Failed to parse token");
+    console.error(error);
+  }
+}
+
 const KeycloakService = {
   CallInit: init,
   CallInitStore: initStore,
   CallLogout: logout,
   CallTokenRefresh: refreshToken,
   CallLogin: login,
+  CallParseToken: parseToken,
 };
 
 export default KeycloakService;

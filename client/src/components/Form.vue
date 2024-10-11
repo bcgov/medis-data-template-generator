@@ -146,9 +146,10 @@
           </div>
           <v-select
             class="cursor-pointer"
-            clearable
+            :clearable="authStore.user.role === 'admin'"
             v-model="selectedFiscalYear"
             :items="fiscalYears"
+            :disabled="authStore.user.role !== 'admin'"
             placeholder="Select Item"
             density="compact"
             variant="outlined"
@@ -170,9 +171,10 @@
           </div>
           <v-select
             class="cursor-pointer"
-            clearable
             v-model="selectedPeriod"
+            :clearable="authStore.user.role === 'admin'"
             :items="periods"
+            :disabled="authStore.user.role !== 'admin'"
             placeholder="Select Item"
             density="compact"
             variant="outlined"
@@ -183,7 +185,7 @@
         <v-btn
           class="mr-2"
           :color="isValid ? 'secondary' : 'grey-lighten-1'"
-          variant="flat"
+          :variant="isValid ? 'flat' : 'plain'"
           :readonly="isPending || !isValid"
           :text="
             isPending || reportingPeriodsIsPending
@@ -194,7 +196,7 @@
         ></v-btn>
         <v-btn
           :color="isValid ? 'primary' : 'grey-lighten-1'"
-          variant="flat"
+          :variant="isValid ? 'flat' : 'plain'"
           :readonly="isPending || !isValid"
           :text="
             isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
@@ -214,6 +216,9 @@ import apiService from "../services/apiService";
 import { periods } from "../utils/enums/application";
 import { RLS } from "../utils/types/rls";
 import { InitiativeTypes, ReportingPeriods } from "../utils/types";
+import { useAuthStore } from "../stores/authStore";
+
+const authStore = useAuthStore();
 
 // Reactive selections
 const healthAuthorities = ref<string[]>([]);
@@ -248,7 +253,12 @@ const isValid = computed(() => {
 // tanstack - Queries
 const { isPending, data } = useQuery({
   queryKey: ["health-authority"],
-  queryFn: () => apiService.getHealthAuthority(),
+  queryFn: async () => {
+    const response = await apiService.getHealthAuthority().then((data) => {
+      return data;
+    });
+    return response;
+  },
 });
 const { isPending: reportingPeriodsIsPending, data: reportingPeriodsData } = useQuery({
   queryKey: ["reporting-periods"],
@@ -269,6 +279,9 @@ const mutation = useMutation({
       .then((data) => {
         FileSaver.saveAs(data.data, "output.xlsm");
       }),
+  onError: (error) => {
+    console.log(error);
+  },
 });
 const mappingMutation = useMutation({
   // data sent back is a blob to be saved as a file
@@ -285,6 +298,9 @@ const mappingMutation = useMutation({
       .then((data) => {
         console.log(data);
       }),
+  onError: (error) => {
+    console.log(error);
+  },
 });
 
 // Effects

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import { storeToRefs } from 'pinia';
-// import { computed } from 'vue';
+import { computed } from "vue";
 import { useAuthStore } from "../../stores/authStore";
 // import { useFormStore } from '~/store/form';
 // import { useIdpStore } from '~/store/identityProviders';
@@ -13,11 +13,12 @@ defineProps({
 });
 
 const authStore = useAuthStore();
+const hasPrivileges = computed(() => authStore.user.role === "admin");
 </script>
 
 <template>
   <nav
-    v-if="!formSubmitMode && authStore.authenticated"
+    v-if="!formSubmitMode && authStore.authenticated && authStore.user.role !== 'No Role'"
     class="elevation-4 navigation-main d-print-none px-md-16 px-4"
   >
     <div class="nav-holder container">
@@ -38,7 +39,7 @@ const authStore = useAuthStore();
             Generate Financial Template
           </RouterLink>
         </li>
-        <li>
+        <li v-if="hasPrivileges">
           <RouterLink data-cy="ReplaceBaseTemplate" to="/replace">
             Replace Templates
           </RouterLink>

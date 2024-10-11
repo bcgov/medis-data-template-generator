@@ -33,9 +33,11 @@ defineExpose({
       <Header :app-title="appTitle" />
       <Nav />
       <!-- center the content in v-row -->
-      <div class="container mx-auto my-4">
+      <!-- <div class="container mx-auto my-4"> -->
+      <div>
         <RouterView />
       </div>
+      <!-- </div> -->
     </v-main>
   </v-layout>
 </template>
