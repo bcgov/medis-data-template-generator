@@ -11,12 +11,28 @@ import ChefsService from "../components/chefsService";
 import mapping from "../utils/mapping";
 import worksheetUtils from "../utils/worksheet";
 import env from "../utils/env";
+import { getCurrentFiscalAndPeriod } from "../utils/helper";
 
 export default {
   generateTemplate: async (req: Request, res: Response, next: any) => {
     try {
       // logs out data from the request
       const data: FinancialSubmission = req.body;
+
+      const role = res.locals.role;
+
+      const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
+
+      // console.log("current fiscal", currentFiscalAndPeriod);
+      console.log("role", role);
+
+      if (
+        role.role !== "admin" &&
+        (data.fiscalYear !== currentFiscalAndPeriod.fiscalYear ||
+          data.reportingPeriod !== currentFiscalAndPeriod.period)
+      ) {
+        return res.status(403).send("Forbidden");
+      }
 
       const budgetData =
         await ChefsService().getBudgetSubmissionForFiscalYear(data);
@@ -58,8 +74,17 @@ export default {
       XlsxPopulate.fromFileAsync(__dirname + process.env.TEMPLATE_ROUTE)
         .then((workbook: Workbook) => {
           const worksheet = workbook.sheet(
-            constants[data.typeOfInitiative.toUpperCase() as Initiative].sheetId
+            `${data.typeOfInitiative.toUpperCase()}`
           );
+
+          worksheet.hidden(false);
+
+          workbook
+            .sheet(`${data.typeOfInitiative.toUpperCase()} Expenses`)
+            .hidden(false);
+          workbook
+            .sheet(`${data.typeOfInitiative.toUpperCase()} Hierarchy`)
+            .hidden(false);
 
           // Fill the data
           worksheetUtils.fillWorksheet(
@@ -91,6 +116,22 @@ export default {
     try {
       // check if body satisfy the FinancialSubmission interface
       const data: FinancialSubmission = req.body;
+
+      const role = res.locals.role;
+
+      const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
+
+      // console.log("current fiscal", currentFiscalAndPeriod);
+      console.log("role", role);
+
+      if (
+        role.role !== "admin" &&
+        (data.fiscalYear !== currentFiscalAndPeriod.fiscalYear ||
+          (data.fiscalYear === currentFiscalAndPeriod.fiscalYear &&
+            data.reportingPeriod !== currentFiscalAndPeriod.period))
+      ) {
+        return res.status(403).send("Forbidden");
+      }
 
       const budgetData =
         await ChefsService().getBudgetSubmissionForFiscalYear(data);

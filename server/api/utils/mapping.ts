@@ -55,7 +55,7 @@ export default {
             initiativeName:
               initiative !== "pcn" ? budgetSubmission[`${initiative}Name`] : "",
             fiscalYear: budgetSubmission.fiscalYear,
-            periodReported: Number(periodReported.split("P")[1]) - 1,
+            periodReported: Number(periodReported.split("P")[1]),
           },
           budget: budget,
           reporting: [],
@@ -96,6 +96,9 @@ export default {
             initiative !== "pcn"
               ? reportingSubmission[`${initiative}Name`]
               : "",
+          notes:
+            reportingSubmission.financialData.notes ||
+            reportingSubmission.financialData.additionalNotes,
         },
         budget: budget,
         reporting: financials
@@ -125,7 +128,9 @@ export default {
           .map((report: any) => {
             return {
               ...report,
-              notes: reportingSubmission.financialData.notes,
+              notes:
+                reportingSubmission.financialData.notes ||
+                reportingSubmission.financialData.additionalNotes,
             };
           }),
       };

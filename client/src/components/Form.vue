@@ -211,6 +211,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useMutation, useQuery } from "@tanstack/vue-query";
+import { toast } from "vue-sonner";
 import FileSaver from "file-saver";
 import apiService from "../services/apiService";
 import { periods } from "../utils/enums/application";
@@ -278,9 +279,20 @@ const mutation = useMutation({
       })
       .then((data) => {
         FileSaver.saveAs(data.data, "output.xlsm");
+        toast.success("Template downloaded successfully", {
+          duration: 5000,
+        });
+        toast.dismiss();
       }),
   onError: (error) => {
+    toast.error(`Mapping failed: ${error.message} - ${error.response.data}`, {
+      duration: 5000,
+    });
     console.log(error);
+    toast.dismiss();
+  },
+  onMutate: async (variables) => {
+    toast.info("Generating template...");
   },
 });
 const mappingMutation = useMutation({
@@ -296,10 +308,21 @@ const mappingMutation = useMutation({
         reportingPeriod: String(selectedPeriod.value),
       })
       .then((data) => {
+        toast.success("Mappings generated successfully", {
+          duration: 5000,
+        });
         console.log(data);
+        toast.dismiss();
       }),
   onError: (error) => {
+    toast.error(`Mapping failed: ${error.message} - ${error.response.data}`, {
+      duration: 5000,
+    });
     console.log(error);
+    toast.dismiss();
+  },
+  onMutate: async (variables) => {
+    toast.info("Generating mappings...");
   },
 });
 
@@ -331,10 +354,11 @@ watch(
       .periodReportingDates.forEach((period: ReportingPeriods) => {
         if (
           today >= new Date(period.startDate) &&
-          today <= new Date(period.endDate) &&
+          today <= new Date(period.submissionDueDate) &&
           period.period !== 14
         ) {
           selectedPeriod.value = `P${period.period}`;
+          return;
         }
       });
 

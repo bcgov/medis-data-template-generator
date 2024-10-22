@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Header from "./components/bcgov/Header.vue";
 import Nav from "./components/bcgov/Navbar.vue";
+import { Toaster } from "vue-sonner";
 import { computed, provide, ref } from "vue";
 
 const isWideLayout = ref(false);
@@ -30,6 +31,7 @@ defineExpose({
 <template>
   <v-layout ref="app" class="app">
     <v-main class="app">
+      <Toaster richColors position="top-center" />
       <Header :app-title="appTitle" />
       <Nav />
       <!-- center the content in v-row -->

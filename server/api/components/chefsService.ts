@@ -197,7 +197,7 @@ export default function ChefsService() {
                 submission.communityName === community &&
                 submission.fiscalYear === data.fiscalYear &&
                 submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1]) - 1
+                  Number(data.reportingPeriod.split("P")[1])
               );
             });
           })
@@ -234,7 +234,7 @@ export default function ChefsService() {
                 data.communitiesNames.includes(submission.communityName) &&
                 submission.fiscalYear === data.fiscalYear &&
                 submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1]) - 1
+                  Number(data.reportingPeriod.split("P")[1])
               );
             });
           })
@@ -271,7 +271,7 @@ export default function ChefsService() {
                 data.communitiesNames.includes(submission.communityName) &&
                 submission.fiscalYear === data.fiscalYear &&
                 submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1]) - 1
+                  Number(data.reportingPeriod.split("P")[1])
               );
             });
           })
@@ -308,7 +308,7 @@ export default function ChefsService() {
                 data.communitiesNames.includes(submission.communityName) &&
                 submission.fiscalYear === data.fiscalYear &&
                 submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1]) - 1
+                  Number(data.reportingPeriod.split("P")[1])
               );
             });
           })

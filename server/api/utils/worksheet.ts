@@ -16,7 +16,11 @@ export default {
   ) => {
     let index = 1;
     budgetsToFinancialItems.forEach((item: any) => {
-      if (item.reporting.length === 0) {
+      if (
+        item.reporting.length === 0 ||
+        item.budget.expenseItem === "Change Management" ||
+        item.budget.expenseSubCategory === "Overhead"
+      ) {
         worksheet.cell("A" + String(index)).value(0);
         worksheet
           .cell(
@@ -64,13 +68,21 @@ export default {
             constants[initiative.toUpperCase() as Initiative]
               .expenseSubCategory + String(index)
           )
-          .value(formatValue(item.budget.expenseSubCategory));
+          .value(
+            formatValue(item.budget.expenseSubCategory) === "Overhead"
+              ? "Overhead Budget"
+              : formatValue(item.budget.expenseSubCategory)
+          );
         worksheet
           .cell(
             constants[initiative.toUpperCase() as Initiative].expenseItem +
               String(index)
           )
-          .value(formatValue(item.budget.expenseItem));
+          .value(
+            formatValue(item.budget.expenseItem) === "Change Management"
+              ? "Chg Mgmt Budget"
+              : formatValue(item.budget.expenseItem)
+          );
         worksheet
           .cell(
             constants[initiative.toUpperCase() as Initiative]
@@ -110,7 +122,13 @@ export default {
         if (initiative === "pcn") {
           worksheet
             .cell(constants.PCN.fiscalYearAllocation + String(index))
-            .value(formatValue(item.budget.fiscalYearAllocation));
+            .value(
+              formatValue(
+                !!item.budget.fiscalYearAllocation
+                  ? Number(item.budget.fiscalYearAllocation) / 100
+                  : null
+              )
+            );
           worksheet
             .cell(constants.PCN.ftesInclRelief + String(index))
             .value(formatValue(item.budget.ftesInclRelief));
@@ -118,8 +136,24 @@ export default {
             .cell(constants.PCN.totalBudgetAllocation + String(index))
             .value(formatValue(item.budget.totalBudgetAllocation));
         }
+        if (initiative === "pcn") {
+          // Needs clarification on the following fields
+          worksheet
+            .cell(constants.PCN.notes + String(index))
+            .value(formatValue(item.submissionInformation.notes));
+        } else {
+          // Needs clarification on the following fields
+          worksheet
+            .cell(
+              // @ts-expect-error - TS doesn't know that initiative is a valid key for constants
+              constants[initiative.toUpperCase()].additionalNotes +
+                String(index)
+            )
+            .value(formatValue(item.submissionInformation.notes));
+        }
         index = index + 1;
-      } else {
+      }
+      if (item.reporting.length > 0) {
         item.reporting.forEach((report: any) => {
           worksheet.cell("A" + String(index)).value(0);
           worksheet
@@ -168,7 +202,11 @@ export default {
               constants[initiative.toUpperCase() as Initiative]
                 .expenseSubCategory + String(index)
             )
-            .value(formatValue(report.expenseSubCategory));
+            .value(
+              formatValue(report.expenseSubCategory) === "Overhead"
+                ? "Overhead Expense"
+                : formatValue(report.expenseSubCategory)
+            );
           if (initiative === "upcc") {
             worksheet
               .cell(
@@ -182,7 +220,11 @@ export default {
               constants[initiative.toUpperCase() as Initiative].expenseItem +
                 String(index)
             )
-            .value(formatValue(report.expenseItem));
+            .value(
+              formatValue(report.expenseItem) === "Change Management"
+                ? "Chg Mgmt Expense"
+                : formatValue(report.expenseItem)
+            );
           worksheet
             .cell(
               constants[initiative.toUpperCase() as Initiative]
@@ -222,7 +264,13 @@ export default {
           if (initiative === "pcn") {
             worksheet
               .cell(constants.PCN.fiscalYearAllocation + String(index))
-              .value(formatValue(item.budget.fiscalYearAllocation));
+              .value(
+                formatValue(
+                  !!item.budget.fiscalYearAllocation
+                    ? Number(item.budget.fiscalYearAllocation) / 100
+                    : null
+                )
+              );
             worksheet
               .cell(constants.PCN.ftesInclRelief + String(index))
               .value(formatValue(item.budget.ftesInclRelief));
@@ -345,17 +393,25 @@ export default {
               constants[initiative.toUpperCase() as Initiative]
                 .fyExpenseVarianceNote + String(index)
             )
-            .value(formatValue(report.fyExpenseVarianceNote));
+            .value(
+              formatValue(
+                report.fyExpenseVarianceNote || report.fyExpenseVarianceNote
+              )
+            );
           if (initiative === "pcn") {
             // Needs clarification on the following fields
             worksheet
               .cell(constants.PCN.notes + String(index))
-              .value(formatValue(report.notes));
+              .value(formatValue(item.submissionInformation.notes));
           } else {
             // Needs clarification on the following fields
             worksheet
-              .cell(constants.CHC.additionalNotes + String(index))
-              .value(formatValue(item.budget.notes));
+              .cell(
+                // @ts-expect-error - TS doesn't know that initiative is a valid key for constants
+                constants[initiative.toUpperCase()].additionalNotes +
+                  String(index)
+              )
+              .value(formatValue(item.submissionInformation.notes));
           }
           index = index + 1;
         });
