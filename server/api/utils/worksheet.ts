@@ -137,6 +137,38 @@ export default {
             .value(formatValue(item.budget.totalBudgetAllocation));
         }
         if (initiative === "pcn") {
+          if (!!item.submissionInformation.budgetLevel) {
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as Initiative]
+                  .fyExpenseForecast + String(index)
+              )
+              .value(
+                formatValue(
+                  item.submissionInformation.budgetLevel.fyExpenseForecast
+                )
+              );
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as Initiative]
+                  .ytdExpenseVarianceNote + String(index)
+              )
+              .value(
+                formatValue(
+                  item.submissionInformation.budgetLevel.ytdExpenseVarianceNote
+                )
+              );
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as Initiative]
+                  .fyExpenseVarianceNote + String(index)
+              )
+              .value(
+                formatValue(
+                  item.submissionInformation.budgetLevel.fyExpenseVarianceNote
+                )
+              );
+          }
           // Needs clarification on the following fields
           worksheet
             .cell(constants.PCN.notes + String(index))

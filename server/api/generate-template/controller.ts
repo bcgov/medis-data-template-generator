@@ -149,10 +149,6 @@ export default {
 
       const budgetsToFinancialItems = budgetToFinancials
         .map((budgetFin: any) => {
-          if (budgetFin.reporting.length === 0) {
-            return [];
-          }
-
           return mapping.mapFinancialItems(
             budgetFin.budget,
             budgetFin.reporting[0],
@@ -163,7 +159,9 @@ export default {
         })
         .flat(1);
 
-      res.status(200).send(budgetsToFinancialItems);
+      res
+        .status(200)
+        .send({ step1: budgetToFinancials, step2: budgetsToFinancialItems });
     } catch (error) {
       console.error("Error creating mappings", error);
       res.status(500).send("Internal Server Error");

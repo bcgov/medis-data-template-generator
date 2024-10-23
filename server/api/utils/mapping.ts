@@ -42,6 +42,7 @@ export default {
       !budgetSubmission[`${initiative}Budget`] ||
       budgetSubmission[`${initiative}Budget`].length === 0
     ) {
+      console.log("No budget items found");
       return [];
     }
 
@@ -86,6 +87,28 @@ export default {
 
     // If there is a submission but there are no financials associated with the budget, return the period so signify there is a submission.
     const budgetToFinancials = budgetData.map((budget: any) => {
+      let budgetLevel = {};
+
+      if (
+        budget.expenseCategory === "Division Of Family Practice" &&
+        budget.expenseItem !== "Change Management" &&
+        budget.expenseSubCategory === "Overhead"
+      ) {
+        budgetLevel = reportingSubmission.financialData.dofp.overhead.budget;
+      } else if (
+        budget.expenseCategory === "Division Of Family Practice" &&
+        budget.expenseItem === "Change Management"
+      ) {
+        budgetLevel = reportingSubmission.financialData.changeManagement.budget;
+      } else if (
+        budget.expenseCategory === "Health Authority" &&
+        budget.expenseItem !== "Change Management" &&
+        budget.expenseSubCategory === "Overhead"
+      ) {
+        budgetLevel =
+          reportingSubmission.financialData.healthAuthority.overhead.budget;
+      }
+
       return {
         submissionInformation: {
           healthAuthority: reportingSubmission.healthAuthority,
@@ -99,6 +122,7 @@ export default {
           notes:
             reportingSubmission.financialData.notes ||
             reportingSubmission.financialData.additionalNotes,
+          budgetLevel: budgetLevel,
         },
         budget: budget,
         reporting: financials

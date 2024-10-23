@@ -192,14 +192,25 @@ export default function ChefsService() {
           });
         const pcnReports = data.communitiesNames
           .map((community) => {
-            return pcnResponse.find((submission: any) => {
-              return (
-                submission.communityName === community &&
-                submission.fiscalYear === data.fiscalYear &&
-                submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1])
+            for (
+              let i = Number(data.reportingPeriod.split("P")[1]);
+              i > 0;
+              i--
+            ) {
+              const reportingSubmission = pcnResponse.find(
+                (submission: any) => {
+                  return (
+                    submission.communityName === community &&
+                    submission.fiscalYear === data.fiscalYear &&
+                    submission.periodReported === i
+                  );
+                }
               );
-            });
+              if (reportingSubmission) {
+                return reportingSubmission;
+              }
+            }
+            return null;
           })
           .filter((submission: any) => submission);
         return pcnReports;
