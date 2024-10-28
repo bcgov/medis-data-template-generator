@@ -36,6 +36,7 @@ export default {
     fyExpenseVariance: "AH",
     fyExpenseVarianceNote: "AI",
     additionalNotes: "AJ",
+    reasonForExceptionInPeriodReported: "AK",
   },
   PCN: {
     sheetId: 2,
@@ -79,6 +80,7 @@ export default {
     fyExpenseVariance: "AM",
     fyExpenseVarianceNote: "AN",
     notes: "AO",
+    reasonForExceptionInPeriodReported: "AP",
   },
   UPCC: {
     sheetId: 3,
@@ -118,6 +120,7 @@ export default {
     fyExpenseVariance: "AI",
     fyExpenseVarianceNote: "AJ",
     additionalNotes: "AK",
+    reasonForExceptionInPeriodReported: "AL",
   },
   NPPCC: {
     sheetId: 4,
@@ -156,5 +159,6 @@ export default {
     fyExpenseVariance: "AH",
     fyExpenseVarianceNote: "AI",
     additionalNotes: "AJ",
+    reasonForExceptionInPeriodReported: "AK",
   },
 };

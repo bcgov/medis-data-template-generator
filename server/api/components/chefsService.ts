@@ -239,15 +239,26 @@ export default function ChefsService() {
           });
         const upccReports = data.initiativeNames
           .map((initiativeName) => {
-            return upccResponse.find((submission: any) => {
-              return (
-                submission.upccName === initiativeName &&
-                data.communitiesNames.includes(submission.communityName) &&
-                submission.fiscalYear === data.fiscalYear &&
-                submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1])
+            for (
+              let i = Number(data.reportingPeriod.split("P")[1]);
+              i > 0;
+              i--
+            ) {
+              const reportingSubmission = upccResponse.find(
+                (submission: any) => {
+                  return (
+                    submission.upccName === initiativeName &&
+                    data.communitiesNames.includes(submission.communityName) &&
+                    submission.fiscalYear === data.fiscalYear &&
+                    submission.periodReported === i
+                  );
+                }
               );
-            });
+              if (reportingSubmission) {
+                return reportingSubmission;
+              }
+            }
+            return null;
           })
           .filter((submission: any) => submission);
         return upccReports;
@@ -276,15 +287,26 @@ export default function ChefsService() {
           });
         const nppccReports = data.initiativeNames
           .map((initiativeName) => {
-            return nppccResponse.find((submission: any) => {
-              return (
-                submission.nppccName === initiativeName &&
-                data.communitiesNames.includes(submission.communityName) &&
-                submission.fiscalYear === data.fiscalYear &&
-                submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1])
+            for (
+              let i = Number(data.reportingPeriod.split("P")[1]);
+              i > 0;
+              i--
+            ) {
+              const reportingSubmission = nppccResponse.find(
+                (submission: any) => {
+                  return (
+                    submission.nppccName === initiativeName &&
+                    data.communitiesNames.includes(submission.communityName) &&
+                    submission.fiscalYear === data.fiscalYear &&
+                    submission.periodReported === i
+                  );
+                }
               );
-            });
+              if (reportingSubmission) {
+                return reportingSubmission;
+              }
+            }
+            return null;
           })
           .filter((submission: any) => submission);
         return nppccReports;
@@ -313,15 +335,26 @@ export default function ChefsService() {
           });
         const chcReports = data.initiativeNames
           .map((initiativeName) => {
-            return chcResponse.find((submission: any) => {
-              return (
-                submission.chcName === initiativeName &&
-                data.communitiesNames.includes(submission.communityName) &&
-                submission.fiscalYear === data.fiscalYear &&
-                submission.periodReported ===
-                  Number(data.reportingPeriod.split("P")[1])
+            for (
+              let i = Number(data.reportingPeriod.split("P")[1]);
+              i > 0;
+              i--
+            ) {
+              const reportingSubmission = chcResponse.find(
+                (submission: any) => {
+                  return (
+                    submission.chcName === initiativeName &&
+                    data.communitiesNames.includes(submission.communityName) &&
+                    submission.fiscalYear === data.fiscalYear &&
+                    submission.periodReported === i
+                  );
+                }
               );
-            });
+              if (reportingSubmission) {
+                return reportingSubmission;
+              }
+            }
+            return null;
           })
           .filter((submission: any) => submission);
         return chcReports;

@@ -89,6 +89,16 @@ export default {
               .expenseItemSubType + String(index)
           )
           .value(formatValue(item.budget.expenseItemSubType));
+        if (initiative === "upcc") {
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as "UPCC"].typeOfCare +
+                String(index)
+            )
+            .value(formatValue(item.budget.typeOfCare));
+        }
+
+        // PCN specific fields
         if (initiative === "pcn") {
           worksheet
             .cell(constants.PCN.approved4YearFtEs + String(index))
@@ -136,39 +146,40 @@ export default {
             .cell(constants.PCN.totalBudgetAllocation + String(index))
             .value(formatValue(item.budget.totalBudgetAllocation));
         }
+        // if (initiative === "pcn") {
+        if (!!item.submissionInformation.budgetLevel) {
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as Initiative]
+                .fyExpenseForecast + String(index)
+            )
+            .value(
+              formatValue(
+                item.submissionInformation.budgetLevel.fyExpenseForecast
+              )
+            );
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as Initiative]
+                .ytdExpenseVarianceNote + String(index)
+            )
+            .value(
+              formatValue(
+                item.submissionInformation.budgetLevel.ytdExpenseVarianceNote
+              )
+            );
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as Initiative]
+                .fyExpenseVarianceNote + String(index)
+            )
+            .value(
+              formatValue(
+                item.submissionInformation.budgetLevel.fyExpenseVarianceNote
+              )
+            );
+        }
         if (initiative === "pcn") {
-          if (!!item.submissionInformation.budgetLevel) {
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as Initiative]
-                  .fyExpenseForecast + String(index)
-              )
-              .value(
-                formatValue(
-                  item.submissionInformation.budgetLevel.fyExpenseForecast
-                )
-              );
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as Initiative]
-                  .ytdExpenseVarianceNote + String(index)
-              )
-              .value(
-                formatValue(
-                  item.submissionInformation.budgetLevel.ytdExpenseVarianceNote
-                )
-              );
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as Initiative]
-                  .fyExpenseVarianceNote + String(index)
-              )
-              .value(
-                formatValue(
-                  item.submissionInformation.budgetLevel.fyExpenseVarianceNote
-                )
-              );
-          }
           // Needs clarification on the following fields
           worksheet
             .cell(constants.PCN.notes + String(index))
@@ -239,14 +250,6 @@ export default {
                 ? "Overhead Expense"
                 : formatValue(report.expenseSubCategory)
             );
-          if (initiative === "upcc") {
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as "UPCC"].typeOfCare +
-                  String(index)
-              )
-              .value(formatValue(report.typeOfCare));
-          }
           worksheet
             .cell(
               constants[initiative.toUpperCase() as Initiative].expenseItem +
@@ -263,64 +266,6 @@ export default {
                 .expenseItemSubType + String(index)
             )
             .value(formatValue(report.expenseItemSubType));
-          if (initiative === "pcn") {
-            worksheet
-              .cell(constants.PCN.approved4YearFtEs + String(index))
-              .value(formatValue(item.budget.approved4YearFtEs));
-            worksheet
-              .cell(constants.PCN.annualBudget + String(index))
-              .value(formatValue(item.budget.annualBudget));
-          } else {
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"]
-                  .approvedFtes + String(index)
-              )
-              .value(
-                formatValue(item.budget.approvedFtes) ||
-                  formatValue(item.budget.approvedFtesInclRelief)
-              );
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"]
-                  .approvedBudget + String(index)
-              )
-              .value(formatValue(item.budget.approvedBudget));
-          }
-          worksheet
-            .cell(
-              constants[initiative.toUpperCase() as Initiative]
-                .approvedAttachmentTarget + String(index)
-            )
-            .value(formatValue(item.budget.approvedAttachmentTarget));
-          if (initiative === "pcn") {
-            worksheet
-              .cell(constants.PCN.fiscalYearAllocation + String(index))
-              .value(
-                formatValue(
-                  !!item.budget.fiscalYearAllocation
-                    ? Number(item.budget.fiscalYearAllocation) / 100
-                    : null
-                )
-              );
-            worksheet
-              .cell(constants.PCN.ftesInclRelief + String(index))
-              .value(formatValue(item.budget.ftesInclRelief));
-            worksheet
-              .cell(constants.PCN.totalBudgetAllocation + String(index))
-              .value(formatValue(item.budget.totalBudgetAllocation));
-
-            // Needs clarification on the following fields
-            worksheet
-              .cell(constants.PCN.otherItems + String(index))
-              .value(formatValue(report.otherItems));
-            worksheet
-              .cell(constants.PCN.listOfRolesTitles + String(index))
-              .value(formatValue(report.listOfRolesTitles));
-            worksheet
-              .cell(constants.PCN.typesOfTraining + String(index))
-              .value(formatValue(report.typesOfTraining));
-          }
 
           worksheet
             .cell(
@@ -406,14 +351,12 @@ export default {
                 .ftesHiredToDate + String(index)
             )
             .value(formatValue(report.ftesHiredToDate));
-          if (report.expenseItem !== "Change Management") {
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as Initiative]
-                  .fyExpenseForecast + String(index)
-              )
-              .value(formatValue(report.fyExpenseForecast));
-          }
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as Initiative]
+                .fyExpenseForecast + String(index)
+            )
+            .value(formatValue(report.fyExpenseForecast));
           worksheet
             .cell(
               constants[initiative.toUpperCase() as Initiative]
@@ -430,6 +373,86 @@ export default {
                 report.fyExpenseVarianceNote || report.fyExpenseVarianceNote
               )
             );
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as Initiative]
+                .reasonForExceptionInPeriodReported + String(index)
+            )
+            .value(
+              formatValue(
+                item.submissionInformation.reasonForExceptionInPeriodReported
+              )
+            );
+
+          if (initiative === "upcc") {
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as "UPCC"].typeOfCare +
+                  String(index)
+              )
+              .value(formatValue(item.budget.typeOfCare));
+          }
+
+          // PCN specific fields
+          if (initiative === "pcn") {
+            worksheet
+              .cell(constants.PCN.approved4YearFtEs + String(index))
+              .value(formatValue(item.budget.approved4YearFtEs));
+            worksheet
+              .cell(constants.PCN.annualBudget + String(index))
+              .value(formatValue(item.budget.annualBudget));
+          } else {
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"]
+                  .approvedFtes + String(index)
+              )
+              .value(
+                formatValue(item.budget.approvedFtes) ||
+                  formatValue(item.budget.approvedFtesInclRelief)
+              );
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"]
+                  .approvedBudget + String(index)
+              )
+              .value(formatValue(item.budget.approvedBudget));
+          }
+          worksheet
+            .cell(
+              constants[initiative.toUpperCase() as Initiative]
+                .approvedAttachmentTarget + String(index)
+            )
+            .value(formatValue(item.budget.approvedAttachmentTarget));
+
+          if (initiative === "pcn") {
+            worksheet
+              .cell(constants.PCN.fiscalYearAllocation + String(index))
+              .value(
+                formatValue(
+                  !!item.budget.fiscalYearAllocation
+                    ? Number(item.budget.fiscalYearAllocation) / 100
+                    : null
+                )
+              );
+            worksheet
+              .cell(constants.PCN.ftesInclRelief + String(index))
+              .value(formatValue(item.budget.ftesInclRelief));
+            worksheet
+              .cell(constants.PCN.totalBudgetAllocation + String(index))
+              .value(formatValue(item.budget.totalBudgetAllocation));
+
+            // Needs clarification on the following fields
+            worksheet
+              .cell(constants.PCN.otherItems + String(index))
+              .value(formatValue(report.otherItems));
+            worksheet
+              .cell(constants.PCN.listOfRolesTitles + String(index))
+              .value(formatValue(report.listOfRolesTitles));
+            worksheet
+              .cell(constants.PCN.typesOfTraining + String(index))
+              .value(formatValue(report.typesOfTraining));
+          }
           if (initiative === "pcn") {
             // Needs clarification on the following fields
             worksheet

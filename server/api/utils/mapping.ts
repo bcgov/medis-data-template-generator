@@ -105,8 +105,12 @@ export default {
         budget.expenseItem !== "Change Management" &&
         budget.expenseSubCategory === "Overhead"
       ) {
-        budgetLevel =
-          reportingSubmission.financialData.healthAuthority.overhead.budget;
+        if (initiative === "pcn") {
+          budgetLevel =
+            reportingSubmission.financialData.healthAuthority.overhead.budget;
+        } else {
+          budgetLevel = reportingSubmission.financialData.overhead.budget;
+        }
       }
 
       return {
@@ -114,7 +118,7 @@ export default {
           healthAuthority: reportingSubmission.healthAuthority,
           communityName: reportingSubmission.communityName,
           fiscalYear: reportingSubmission.fiscalYear,
-          periodReported: reportingSubmission.periodReported,
+          periodReported: Number(periodReported.split("P")[1]),
           initiativeName:
             initiative !== "pcn"
               ? reportingSubmission[`${initiative}Name`]
@@ -122,6 +126,8 @@ export default {
           notes:
             reportingSubmission.financialData.notes ||
             reportingSubmission.financialData.additionalNotes,
+          reasonForExceptionInPeriodReported:
+            reportingSubmission.reasonForExceptionInPeriodReported,
           budgetLevel: budgetLevel,
         },
         budget: budget,
