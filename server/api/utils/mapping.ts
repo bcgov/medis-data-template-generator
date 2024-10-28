@@ -42,6 +42,7 @@ export default {
       !budgetSubmission[`${initiative}Budget`] ||
       budgetSubmission[`${initiative}Budget`].length === 0
     ) {
+      console.log("No budget items found");
       return [];
     }
 
@@ -55,7 +56,7 @@ export default {
             initiativeName:
               initiative !== "pcn" ? budgetSubmission[`${initiative}Name`] : "",
             fiscalYear: budgetSubmission.fiscalYear,
-            periodReported: Number(periodReported.split("P")[1]) - 1,
+            periodReported: Number(periodReported.split("P")[1]),
           },
           budget: budget,
           reporting: [],
@@ -82,14 +83,52 @@ export default {
 
     iterate(reportingData);
 
+    // console.log(financials);
+
     // If there is a submission but there are no financials associated with the budget, return the period so signify there is a submission.
     const budgetToFinancials = budgetData.map((budget: any) => {
+      let budgetLevel = {};
+
+      if (
+        budget.expenseCategory === "Division Of Family Practice" &&
+        budget.expenseItem !== "Change Management" &&
+        budget.expenseSubCategory === "Overhead"
+      ) {
+        budgetLevel = reportingSubmission.financialData.dofp.overhead.budget;
+      } else if (
+        budget.expenseCategory === "Division Of Family Practice" &&
+        budget.expenseItem === "Change Management"
+      ) {
+        budgetLevel = reportingSubmission.financialData.changeManagement.budget;
+      } else if (
+        budget.expenseCategory === "Health Authority" &&
+        budget.expenseItem !== "Change Management" &&
+        budget.expenseSubCategory === "Overhead"
+      ) {
+        if (initiative === "pcn") {
+          budgetLevel =
+            reportingSubmission.financialData.healthAuthority.overhead.budget;
+        } else {
+          budgetLevel = reportingSubmission.financialData.overhead.budget;
+        }
+      }
+
       return {
         submissionInformation: {
           healthAuthority: reportingSubmission.healthAuthority,
           communityName: reportingSubmission.communityName,
           fiscalYear: reportingSubmission.fiscalYear,
-          periodReported: reportingSubmission.periodReported,
+          periodReported: Number(periodReported.split("P")[1]),
+          initiativeName:
+            initiative !== "pcn"
+              ? reportingSubmission[`${initiative}Name`]
+              : "",
+          notes:
+            reportingSubmission.financialData.notes ||
+            reportingSubmission.financialData.additionalNotes,
+          reasonForExceptionInPeriodReported:
+            reportingSubmission.reasonForExceptionInPeriodReported,
+          budgetLevel: budgetLevel,
         },
         budget: budget,
         reporting: financials
@@ -119,7 +158,9 @@ export default {
           .map((report: any) => {
             return {
               ...report,
-              notes: reportingSubmission.financialData.notes,
+              notes:
+                reportingSubmission.financialData.notes ||
+                reportingSubmission.financialData.additionalNotes,
             };
           }),
       };

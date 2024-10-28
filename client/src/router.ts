@@ -3,42 +3,72 @@ import GenerateTemplate from "./views/GenerateTemplate.vue";
 import ReplaceTemplate from "./views/ReplaceTemplate.vue";
 import NProgress from "nprogress";
 import Home from "./views/Home.vue";
+import KeycloakService from "./services/keycloak";
+import { useAuthStore } from "./stores/authStore";
+import NotAuthorized from "./views/NotAuthorized.vue";
+import apiService from "./services/apiService";
+import NotInitialized from "./views/NotInitialized.vue";
 
 let isFirstTransition = true;
 
 const routes = [
   {
     path: "/",
+    name: "Home",
     component: Home,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/financial",
+    name: "Financial",
     component: GenerateTemplate,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/replace",
+    name: "Replace",
     component: ReplaceTemplate,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: NotAuthorized,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: "/no-init",
+    name: "NotInitialized",
+    component: NotInitialized,
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_PATH || "/app"),
+  history: createWebHistory(import.meta.env.VITE_BASE_PATH || ""),
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start();
-  //   const authStore = useAuthStore();
-  //   const idpStore = useIdpStore();
 
-  const basePath = import.meta.env.VITE_BASE_PATH || "/app";
+  let destination = "";
+
+  const authStore = useAuthStore();
+
+  const basePath = import.meta.env.VITE_BASE_PATH || "";
 
   if (isFirstTransition) {
-    // if (authStore?.ready && authStore?.authenticated) {
-    //     const formStore = useFormStore();
-    //     formStore.getFormsForCurrentUser();
-    //   }
-    // Handle proper redirections on first page load
     if (to.query.r) {
       router.replace({
         path: String(to.query.r).replace(basePath, ""),
@@ -47,34 +77,43 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  // Force login redirect if not authenticated
-  // Note some pages (Submit and Success) only require auth if the form being loaded is secured
-  // in those cases, see the beforeEnter navigation guards for auth loop determination
-  // if (
-  //   to.matched.some((route) => route.meta.requiresAuth) &&
-  //   authStore.ready &&
-  //   !authStore.authenticated
-  // ) {
-  //   const redirectUri =
-  //     location.origin + basePath + to.path + location.search;
-  //   authStore.redirectUri = redirectUri;
+  if (to.meta.requiresAuth && !authStore.authenticated && authStore.ready) {
+    authStore.login();
+    destination = "Login";
+  }
 
-  //   // Determine what kind of redirect behavior is needed
-  //   let idpHint = undefined;
-  //   if (
-  //     typeof to.meta.requiresAuth === 'string' &&
-  //     to.meta.requiresAuth === 'primary'
-  //   ) {
-  //     idpHint = idpStore.primaryIdp ? idpStore.primaryIdp.code : null;
-  //   }
-  //   authStore.login(idpHint);
-  // }
+  if (authStore.authenticated && authStore.ready && !authStore.user.role) {
+    try {
+      const role = await apiService.getRole().then((res) => res.data);
+      console.log(role);
+      authStore.updateRole(role[0].role);
+      destination = "";
+    } catch (error) {
+      console.error("Error fetching RLS Role", error);
+      authStore.updateRole("No Role");
+    }
+  }
+
+  if (
+    authStore.authenticated &&
+    authStore.ready &&
+    authStore.user.role === "No Role"
+  ) {
+    destination = "NotInitialized";
+  }
 
   // Update document title if applicable
   document.title = to.meta.title
     ? to.meta.title
     : import.meta.env.VITE_TITLE || "MEDIS Data Template Generator";
-  next();
+
+  if (destination === "") {
+    next();
+  } else {
+    next({
+      name: destination,
+    });
+  }
 });
 
 router.afterEach(() => {

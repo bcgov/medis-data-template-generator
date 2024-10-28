@@ -11,7 +11,7 @@ const proxyObject = {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: "/app",
+  // base: "/app",
   server: {
     proxy: {
       "/api": proxyObject,

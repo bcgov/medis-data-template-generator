@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { storeToRefs } from 'pinia';
-// import { computed } from 'vue';
-// import { useAuthStore } from '~/store/auth';
+import { computed } from "vue";
+import { useAuthStore } from "../../stores/authStore";
 // import { useFormStore } from '~/store/form';
 // import { useIdpStore } from '~/store/identityProviders';
 
@@ -12,21 +12,13 @@ defineProps({
   },
 });
 
-// const idpStore = useIdpStore();
-
-// const { authenticated, /*isAdmin,*/ identityProvider } = storeToRefs(
-//   useAuthStore()
-// );
-// const { lang } = storeToRefs(useFormStore());
-
-// const hasPrivileges = computed(() => {
-//   return idpStore.isPrimary(identityProvider?.value?.code);
-// });
+const authStore = useAuthStore();
+const hasPrivileges = computed(() => authStore.user.role === "admin");
 </script>
 
 <template>
   <nav
-    v-if="!formSubmitMode"
+    v-if="!formSubmitMode && authStore.authenticated && authStore.user.role !== 'No Role'"
     class="elevation-4 navigation-main d-print-none px-md-16 px-4"
   >
     <div class="nav-holder container">
@@ -40,11 +32,14 @@ defineProps({
           >
         </li> -->
         <li>
+          <RouterLink data-cy="GenerateTemplateLinks" to="/"> Instructions </RouterLink>
+        </li>
+        <li>
           <RouterLink data-cy="GenerateTemplateLinks" to="/financial">
             Generate Financial Template
           </RouterLink>
         </li>
-        <li>
+        <li v-if="hasPrivileges">
           <RouterLink data-cy="ReplaceBaseTemplate" to="/replace">
             Replace Templates
           </RouterLink>
