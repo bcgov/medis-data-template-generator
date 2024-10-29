@@ -285,13 +285,14 @@ const mutation = useMutation({
         toast.dismiss();
       }),
   onError: (error) => {
+    // @ts-expect-error - error is not defined
     toast.error(`Mapping failed: ${error.message} - ${error.response.data}`, {
       duration: 5000,
     });
     console.log(error);
     toast.dismiss();
   },
-  onMutate: async (variables) => {
+  onMutate: () => {
     toast.info("Generating template...");
   },
 });
@@ -315,13 +316,14 @@ const mappingMutation = useMutation({
         toast.dismiss();
       }),
   onError: (error) => {
+    // @ts-expect-error - error is not defined
     toast.error(`Mapping failed: ${error.message} - ${error.response.data}`, {
       duration: 5000,
     });
     console.log(error);
     toast.dismiss();
   },
-  onMutate: async (variables) => {
+  onMutate: () => {
     toast.info("Generating mappings...");
   },
 });

@@ -1,10 +1,5 @@
 import XlsxPopulate, { Workbook } from "xlsx-populate";
-
-import constants from "../utils/constants";
-import {
-  FinancialSubmission,
-  Initiative,
-} from "../../interfaces/FinancialSubmission";
+import { FinancialSubmission } from "../../interfaces/FinancialSubmission";
 
 import { Request, Response } from "express";
 import ChefsService from "../components/chefsService";
@@ -12,6 +7,7 @@ import mapping from "../utils/mapping";
 import worksheetUtils from "../utils/worksheet";
 import env from "../utils/env";
 import { getCurrentFiscalAndPeriod } from "../utils/helper";
+import { getTemplateAsBuffer } from "../utils/s3";
 
 export default {
   generateTemplate: async (req: Request, res: Response, next: any) => {
@@ -70,8 +66,25 @@ export default {
         })
         .flat(1);
 
+      const bucket = env.MINIO_BUCKET || "";
+
+      if (!env.TEMPLATE_ROUTE) {
+        throw new Error("Template route not found");
+      }
+
+      const buffer = await getTemplateAsBuffer(bucket, env.TEMPLATE_ROUTE);
+
+      if (!buffer) {
+        throw new Error("Template not found");
+      }
+
+      // const readableStream
+      const readableStream = await buffer.transformToByteArray();
+
+      // console.log("buffer", readableStream);
+
       /* generate workbook object from XLSX file */
-      XlsxPopulate.fromFileAsync(__dirname + process.env.TEMPLATE_ROUTE)
+      XlsxPopulate.fromDataAsync(readableStream)
         .then((workbook: Workbook) => {
           const worksheet = workbook.sheet(
             `${data.typeOfInitiative.toUpperCase()}`
@@ -122,7 +135,9 @@ export default {
       const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
 
       // console.log("current fiscal", currentFiscalAndPeriod);
-      console.log("role", role);
+      // console.log("role", role);
+
+      // const bucket = env.MINIO_BUCKET || "";
 
       if (
         role.role !== "admin" &&

@@ -22,4 +22,11 @@ export default {
   getRole() {
     return apiAxios().get("/role");
   },
+  uploadFinancialDataTemplate(data: FormData) {
+    return apiAxios().post("/replace-template/financial", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 };
