@@ -34,7 +34,7 @@ export default {
               String(index)
           )
           .value(formatValue(item.submissionInformation.communityName));
-        if (initiative === "upcc" || initiative === "chc") {
+        if (initiative !== "pcn") {
           worksheet
             .cell(
               (initiative === "upcc"
@@ -211,7 +211,7 @@ export default {
                 String(index)
             )
             .value(formatValue(item.submissionInformation.communityName));
-          if (initiative === "upcc" || initiative === "chc") {
+          if (initiative !== "pcn") {
             worksheet
               .cell(
                 (initiative === "upcc"
@@ -394,53 +394,71 @@ export default {
           }
 
           // PCN specific fields
-          if (initiative === "pcn") {
-            worksheet
-              .cell(constants.PCN.approved4YearFtEs + String(index))
-              .value(formatValue(item.budget.approved4YearFtEs));
-            worksheet
-              .cell(constants.PCN.annualBudget + String(index))
-              .value(formatValue(item.budget.annualBudget));
-          } else {
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"]
-                  .approvedFtes + String(index)
-              )
-              .value(
-                formatValue(item.budget.approvedFtes) ||
-                  formatValue(item.budget.approvedFtesInclRelief)
-              );
-            worksheet
-              .cell(
-                constants[initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"]
-                  .approvedBudget + String(index)
-              )
-              .value(formatValue(item.budget.approvedBudget));
+          if (
+            formatValue(report.expenseSubCategory) !== "Overhead" &&
+            formatValue(report.expenseItem) !== "Change Management"
+          ) {
+            if (initiative === "pcn") {
+              worksheet
+                .cell(constants.PCN.approved4YearFtEs + String(index))
+                .value(formatValue(item.budget.approved4YearFtEs));
+              worksheet
+                .cell(constants.PCN.annualBudget + String(index))
+                .value(formatValue(item.budget.annualBudget));
+            } else {
+              worksheet
+                .cell(
+                  constants[
+                    initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"
+                  ].approvedFtes + String(index)
+                )
+                .value(
+                  formatValue(item.budget.approvedFtes) ||
+                    formatValue(item.budget.approvedFtesInclRelief)
+                );
+              worksheet
+                .cell(
+                  constants[
+                    initiative.toUpperCase() as "UPCC" | "CHC" | "NPPCC"
+                  ].approvedBudget + String(index)
+                )
+                .value(formatValue(item.budget.approvedBudget));
+            }
           }
-          worksheet
-            .cell(
-              constants[initiative.toUpperCase() as Initiative]
-                .approvedAttachmentTarget + String(index)
-            )
-            .value(formatValue(item.budget.approvedAttachmentTarget));
+
+          if (
+            formatValue(report.expenseSubCategory) !== "Overhead" &&
+            formatValue(report.expenseItem) !== "Change Management"
+          ) {
+            worksheet
+              .cell(
+                constants[initiative.toUpperCase() as Initiative]
+                  .approvedAttachmentTarget + String(index)
+              )
+              .value(formatValue(item.budget.approvedAttachmentTarget));
+          }
 
           if (initiative === "pcn") {
-            worksheet
-              .cell(constants.PCN.fiscalYearAllocation + String(index))
-              .value(
-                formatValue(
-                  !!item.budget.fiscalYearAllocation
-                    ? Number(item.budget.fiscalYearAllocation) / 100
-                    : null
-                )
-              );
-            worksheet
-              .cell(constants.PCN.ftesInclRelief + String(index))
-              .value(formatValue(item.budget.ftesInclRelief));
-            worksheet
-              .cell(constants.PCN.totalBudgetAllocation + String(index))
-              .value(formatValue(item.budget.totalBudgetAllocation));
+            if (
+              formatValue(report.expenseSubCategory) !== "Overhead" &&
+              formatValue(report.expenseItem) !== "Change Management"
+            ) {
+              worksheet
+                .cell(constants.PCN.fiscalYearAllocation + String(index))
+                .value(
+                  formatValue(
+                    !!item.budget.fiscalYearAllocation
+                      ? Number(item.budget.fiscalYearAllocation) / 100
+                      : null
+                  )
+                );
+              worksheet
+                .cell(constants.PCN.ftesInclRelief + String(index))
+                .value(formatValue(item.budget.ftesInclRelief));
+              worksheet
+                .cell(constants.PCN.totalBudgetAllocation + String(index))
+                .value(formatValue(item.budget.totalBudgetAllocation));
+            }
 
             // Needs clarification on the following fields
             worksheet

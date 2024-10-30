@@ -1,6 +1,5 @@
 export default {
   CHC: {
-    sheetId: 1,
     fiscalYear: "B",
     periodReported: "C",
     healthAuthority: "D",
@@ -39,7 +38,6 @@ export default {
     reasonForExceptionInPeriodReported: "AK",
   },
   PCN: {
-    sheetId: 2,
     fiscalYear: "B",
     periodReported: "C",
     healthAuthority: "D",
@@ -83,7 +81,6 @@ export default {
     reasonForExceptionInPeriodReported: "AP",
   },
   UPCC: {
-    sheetId: 3,
     fiscalYear: "B",
     periodReported: "C",
     healthAuthority: "D",
