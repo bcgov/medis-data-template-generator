@@ -1,9 +1,9 @@
 import env from "../utils/env";
 
 export const getRLSHealthAuthorityHierarchy = async (payload: any) => {
-  const apiUrl = process.env.RLS_API_URL;
-  const haFormId = process.env.RLS_HA_FORM_ID;
-  const apiKey = process.env.RLS_API_KEY || "";
+  const apiUrl = env.RLS_API_URL;
+  const haFormId = env.RLS_HA_FORM_ID;
+  const apiKey = env.RLS_API_KEY || "";
   try {
     console.log(payload);
     const userGuid = payload.idir_user_guid || payload.bceid_user_guid;
@@ -15,7 +15,7 @@ export const getRLSHealthAuthorityHierarchy = async (payload: any) => {
         Connection: "keep-alive",
         apiKey: apiKey,
         Application: "application/json",
-        "x-chefs-user-userid": payload.idir_user_guid,
+        "x-chefs-user-userid": userGuid,
       },
     })
       .then((res) => res.json())
