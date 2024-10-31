@@ -1,4 +1,3 @@
-# dockerfile for an image with the admin api, express deployment
 FROM node:lts-alpine3.16
 ENV NODE_ENV production
 
@@ -22,4 +21,4 @@ RUN npm run build
 EXPOSE 8080
 
 # Run app
-CMD [ "node","dist/app.js" ]
+CMD [ "node","dist/index.js" ]
