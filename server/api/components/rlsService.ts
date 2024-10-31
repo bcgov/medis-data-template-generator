@@ -6,6 +6,8 @@ export const getRLSHealthAuthorityHierarchy = async (payload: any) => {
   const apiKey = process.env.RLS_API_KEY || "";
   try {
     console.log(payload);
+    const userGuid = payload.idir_user_guid || payload.bceid_user_guid;
+
     // TODO: Move to Axios for consistency, currently only fetch works
     //  axios would throw an error saying too many redirects
     const response = await fetch(`${apiUrl}?extFormId=${haFormId}`, {
@@ -33,7 +35,7 @@ export const getRLSRole = async (payload: any) => {
   const roleFormId = env.RLS_ROLE_FORM_ID;
   const apiKey = env.RLS_API_KEY || "";
   try {
-    const user_guid = payload.idir_user_guid || payload.bceid_user_guid;
+    const userGuid = payload.idir_user_guid || payload.bceid_user_guid;
     // TODO: Move to Axios for consistency, currently only fetch works
     //  axios would throw an error saying too many redirects
     const response = await fetch(`${apiUrl}?extFormId=${roleFormId}`, {
@@ -41,7 +43,7 @@ export const getRLSRole = async (payload: any) => {
         Connection: "keep-alive",
         apiKey: apiKey,
         Application: "application/json",
-        "x-chefs-user-userid": user_guid,
+        "x-chefs-user-userid": userGuid,
       },
     })
       .then((res) => res.json())
