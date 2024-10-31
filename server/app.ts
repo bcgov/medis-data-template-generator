@@ -7,8 +7,18 @@ import * as middlewares from "./middlewares/common";
 import { protectMiddleware } from "./middlewares/jwt";
 import router from "./api/routes";
 import { roleMiddleware } from "./middlewares/role";
+import env from "./api/utils/env";
 
 require("dotenv").config();
+
+// ENVs check
+Object.keys(env).forEach((key) => {
+  const envKey = key as keyof typeof env;
+  if (!env[envKey]) {
+    console.error(`ENV ${envKey} is missing`);
+    process.exit(1);
+  }
+});
 
 const corsOptions = {
   origin:

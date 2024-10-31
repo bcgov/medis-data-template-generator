@@ -278,7 +278,10 @@ const mutation = useMutation({
         reportingPeriod: String(selectedPeriod.value),
       })
       .then((data) => {
-        FileSaver.saveAs(data.data, "output.xlsm");
+        FileSaver.saveAs(
+          data.data,
+          `${initiative.value}${selectedHealthAuthority.value}${selectedPeriod.value}.xlsm`
+        );
         toast.success("Template downloaded successfully", {
           duration: 5000,
         });

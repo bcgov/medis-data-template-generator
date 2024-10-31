@@ -3,7 +3,6 @@ import GenerateTemplate from "./views/GenerateTemplate.vue";
 import ReplaceTemplate from "./views/ReplaceTemplate.vue";
 import NProgress from "nprogress";
 import Home from "./views/Home.vue";
-import KeycloakService from "./services/keycloak";
 import { useAuthStore } from "./stores/authStore";
 import NotAuthorized from "./views/NotAuthorized.vue";
 import apiService from "./services/apiService";
