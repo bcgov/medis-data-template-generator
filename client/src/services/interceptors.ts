@@ -9,11 +9,11 @@ import { useAuthStore } from "../stores/authStore";
 
 // Axios serializes query params and encodes spaces with '+'
 // Some external APIs may require spaces to be encoded with '%20 instead
-const paramRegex = /\+/g;
-const paramsSerializer = {
-  encode: (param: string) =>
-    encodeURIComponent(param).replace(paramRegex, "%20"),
-};
+// const paramRegex = /\+/g;
+// const paramsSerializer = {
+//   encode: (param: string) =>
+//     encodeURIComponent(param).replace(paramRegex, "%20"),
+// };
 
 /**
  * @function apiAxios
