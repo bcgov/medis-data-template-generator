@@ -35,4 +35,6 @@ export default {
   MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
   MINIO_BUCKET: process.env.MINIO_BUCKET,
   MINIO_REGION: process.env.MINIO_REGION,
+  LIMIT: process.env.LIMIT,
+  LIMIT_WINDOW: process.env.LIMIT_WINDOW,
 };

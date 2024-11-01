@@ -8,6 +8,7 @@ import { protectMiddleware } from "./middlewares/jwt";
 import router from "./api/routes";
 import { roleMiddleware } from "./middlewares/role";
 import env from "./api/utils/env";
+import limiter from "./middlewares/rateLimiter";
 
 require("dotenv").config();
 
@@ -42,7 +43,14 @@ app.set("trust proxy", "loopback, linklocal, uniquelocal");
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(limiter);
 app.use("/api", protectMiddleware, roleMiddleware, router);
+
+router.get("/health-check", (_req, res) => {
+  res.json({
+    message: "Healthy!",
+  });
+});
 
 app.use((req, res) => {
   if (req.originalUrl.startsWith(`${process.env.API_BASEPATH}/api`)) {
