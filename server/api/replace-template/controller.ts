@@ -9,7 +9,7 @@ export default {
     try {
       const role = res.locals.role;
 
-      if (role.role !== "admin") {
+      if (!role.role || role.role !== "admin") {
         return res.status(403).send("Forbidden");
       }
 
@@ -37,7 +37,7 @@ export default {
     try {
       const role = res.locals.role;
 
-      if (role.role !== "admin") {
+      if (!role.role || role.role !== "admin") {
         return res.status(403).send("Forbidden");
       }
 
