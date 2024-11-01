@@ -44,7 +44,7 @@ app.use(express.json());
 app.use(limiter);
 app.use("/api", protectMiddleware, roleMiddleware, router);
 
-router.get("/health-check", (_req, res) => {
+app.get("/health-check", (_req, res) => {
   res.json({
     message: "Healthy!",
   });
