@@ -30,8 +30,6 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-const staticFilesPath = process.env.FRONTEND_PATH || "/app";
-
 const app = express();
 
 app.use(
@@ -50,22 +48,6 @@ router.get("/health-check", (_req, res) => {
   res.json({
     message: "Healthy!",
   });
-});
-
-app.use((req, res) => {
-  if (req.originalUrl.startsWith(`${process.env.API_BASEPATH}/api`)) {
-    // Return a 404 problem if attempting to access API
-    return res.status(404).json({
-      type: "https://httpstatuses.com/404",
-      title: "Not Found",
-      status: 404,
-      detail: "Resource not found",
-    });
-  } else {
-    // Redirect any non-API requests to static frontend with redirect breadcrumb
-    const query = new URLSearchParams({ ...req.query, r: req.path });
-    res.redirect(`${staticFilesPath}/?${query}`);
-  }
 });
 
 app.use(middlewares.notFound);
