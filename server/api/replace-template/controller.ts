@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import env from "../utils/env";
-import { getTemplateAsBuffer } from "../utils/s3";
+import { Readable } from "stream";
 import client from "../components/minioService";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export default {
   getFinancialsTemplate: async (req: Request, res: Response) => {
@@ -19,18 +19,15 @@ export default {
         throw new Error("Template route not found");
       }
 
-      const buffer = await getTemplateAsBuffer(bucket, env.TEMPLATE_ROUTE);
+      const response = await client.send(
+        new GetObjectCommand({ Bucket: bucket, Key: env.TEMPLATE_ROUTE })
+      );
 
-      if (!buffer) {
+      if (!response.Body) {
         throw new Error("Template not found");
       }
 
-      // const readableStream
-      const readableStream = await buffer.transformToByteArray();
-      res.attachment("filled." + env.TEMPLATE_ROUTE);
-
-      // Send the workbook.
-      res.send(readableStream);
+      (response.Body as Readable).pipe(res);
     } catch (error) {
       console.log(error);
       res.status(500).send("Internal Server Error");

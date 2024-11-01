@@ -29,4 +29,9 @@ export default {
       },
     });
   },
+  getCurrentFinancialDataTemplate() {
+    return apiAxios().get("/replace-template/financial", {
+      responseType: "blob",
+    });
+  },
 };

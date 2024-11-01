@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BCLogo from "../../assets/images/bc_logo.svg";
+import BCLogo from "../../assets/bc_logo.svg";
 import { useAuthStore } from "../../stores/authStore";
 
 const props = defineProps({
@@ -60,7 +60,7 @@ const environment = import.meta.env.VITE_ENVIRONMENT || "local";
         color="white"
         density="default"
         variant="outlined"
-        v-if="authStore.authenticated"
+        v-if="authStore.authenticated && environment === 'dev'"
         @click="authStore.logout()"
       >
         <span>Logout</span>

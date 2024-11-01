@@ -183,6 +183,16 @@
       </v-row>
       <div class="d-flex flex-row w-25">
         <v-btn
+          v-if="environment === 'dev'"
+          :color="isValid ? 'primary' : 'grey-lighten-1'"
+          :variant="isValid ? 'flat' : 'plain'"
+          :readonly="isPending || !isValid"
+          :text="
+            isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
+          "
+          @click="mutation.mutate"
+        ></v-btn>
+        <v-btn
           class="mr-2"
           :color="isValid ? 'secondary' : 'grey-lighten-1'"
           :variant="isValid ? 'flat' : 'plain'"
@@ -193,15 +203,6 @@
               : 'Create Mappings (DEV only)'
           "
           @click="mappingMutation.mutate"
-        ></v-btn>
-        <v-btn
-          :color="isValid ? 'primary' : 'grey-lighten-1'"
-          :variant="isValid ? 'flat' : 'plain'"
-          :readonly="isPending || !isValid"
-          :text="
-            isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
-          "
-          @click="mutation.mutate"
         ></v-btn>
       </div>
     </v-container>
@@ -218,6 +219,8 @@ import { periods } from "../utils/enums/application";
 import { RLS } from "../utils/types/rls";
 import { InitiativeTypes, ReportingPeriods } from "../utils/types";
 import { useAuthStore } from "../stores/authStore";
+
+const environment = import.meta.env.VITE_ENVIRONMENT || "local";
 
 const authStore = useAuthStore();
 
