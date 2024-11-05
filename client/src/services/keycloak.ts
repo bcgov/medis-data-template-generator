@@ -54,7 +54,7 @@ async function init() {
       updateTokenInterval = setInterval(async () => {
         updateToken(60);
       }, 10000);
-      logout();
+      // logout();
       clearInterval(updateTokenInterval);
       clearInterval(expiredTokenInterval);
     };
@@ -95,10 +95,10 @@ async function login() {
  * Initializes store with Keycloak user data
  *
  */
-async function initStore(storeInstance: any) {
+async function initStore(storeInstance: any, clearData = true) {
   try {
     store = storeInstance;
-    store.initOauth(keycloak);
+    store.initOauth(keycloak, clearData);
 
     // Force login if user is not authenticated
     if (!authenticated) {
@@ -136,6 +136,15 @@ async function refreshToken() {
   }
 }
 
+async function getToken() {
+  try {
+    return keycloak.token;
+  } catch (error) {
+    console.error("Failed to get token");
+    console.error(error);
+  }
+}
+
 async function parseToken() {
   try {
     return keycloak.tokenParsed;
@@ -152,6 +161,7 @@ const KeycloakService = {
   CallTokenRefresh: refreshToken,
   CallLogin: login,
   CallParseToken: parseToken,
+  CallGetToken: getToken,
 };
 
 export default KeycloakService;

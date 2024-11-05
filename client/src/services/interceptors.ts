@@ -6,6 +6,7 @@ import type {
   InternalAxiosRequestConfig,
 } from "axios";
 import { useAuthStore } from "../stores/authStore";
+import KeycloakService from "./keycloak";
 
 // Axios serializes query params and encodes spaces with '+'
 // Some external APIs may require spaces to be encoded with '%20 instead
@@ -21,12 +22,17 @@ import { useAuthStore } from "../stores/authStore";
  * @param {AxiosRequestConfig} options Axios request config options
  * @returns {AxiosInstance} An axios instance
  */
-export function apiAxios(options: AxiosRequestConfig = {}): AxiosInstance {
+export async function apiAxios(
+  options: AxiosRequestConfig = {}
+): Promise<AxiosInstance> {
   const authStore = useAuthStore();
 
   if (authStore.authenticated) {
+    await KeycloakService.CallInitStore(authStore, false);
+    const token = await KeycloakService.CallGetToken();
+
     options.headers = {
-      Authorization: `Bearer ${authStore.user.token}`,
+      Authorization: `Bearer ${token}`,
     };
   } else {
     throw new Error("User is not authenticated");
