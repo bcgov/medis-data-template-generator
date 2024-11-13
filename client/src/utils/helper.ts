@@ -40,7 +40,6 @@ export function getCurrentFiscalAndPeriod(periods: any[]) {
   // in the case that nothing matches, default to the last period
   let validationPeriod = 13;
   let validationFiscalYear = currentFiscal;
-  let validationPeriodStartDate = "";
 
   allPeriods.forEach((period, index) => {
     let start = new Date(period.startDate);
@@ -56,7 +55,6 @@ export function getCurrentFiscalAndPeriod(periods: any[]) {
     if (today >= start && today <= end) {
       validationFiscalYear = period.fiscalYear;
       validationPeriod = period.period;
-      validationPeriodStartDate = period.startDate;
     }
   });
 
