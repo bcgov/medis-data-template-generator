@@ -7,15 +7,8 @@ import type {
 } from "axios";
 import { useAuthStore } from "../stores/authStore";
 import KeycloakService from "./keycloak";
-
-// Axios serializes query params and encodes spaces with '+'
-// Some external APIs may require spaces to be encoded with '%20 instead
-// const paramRegex = /\+/g;
-// const paramsSerializer = {
-//   encode: (param: string) =>
-//     encodeURIComponent(param).replace(paramRegex, "%20"),
-// };
-
+import { useDialogStore } from "../stores/appStore";
+import { toast } from "vue-sonner";
 /**
  * @function apiAxios
  * Returns an Axios instance for the application API
@@ -26,8 +19,10 @@ export async function apiAxios(
   options: AxiosRequestConfig = {}
 ): Promise<AxiosInstance> {
   const authStore = useAuthStore();
+  const dialogStore = useDialogStore();
 
   if (authStore.authenticated) {
+    authStore.refreshUserToken();
     await KeycloakService.CallInitStore(authStore, false);
     const token = await KeycloakService.CallGetToken();
 
@@ -57,13 +52,23 @@ export async function apiAxios(
     (response) => {
       return response;
     },
-    (error) => {
-      const errResponse = String(error.response?.data);
+    async (error) => {
+      let errResponse = "";
+      try {
+        errResponse = String(error.response?.data);
+      } catch (e) {
+        console.error(e);
+        errResponse = await error.response.data.text();
+      }
 
       if (errResponse === "Token expired") {
-        authStore.login();
+        toast.dismiss();
+        dialogStore.openDialog(
+          "User timed-out",
+          "Please confirm if you are still using the generator, and retry your action."
+        );
       } else {
-        console.log(error);
+        console.log("From error file", error);
       }
       return Promise.reject(error);
     }

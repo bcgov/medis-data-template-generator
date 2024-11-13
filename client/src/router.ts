@@ -12,17 +12,17 @@ let isFirstTransition = true;
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: "/financial",
+    name: "Financial",
+    component: GenerateTemplate,
     meta: {
       requiresAuth: true,
     },
   },
   {
-    path: "/financial",
-    name: "Financial",
-    component: GenerateTemplate,
+    path: "/",
+    name: "Home",
+    component: Home,
     meta: {
       requiresAuth: true,
     },

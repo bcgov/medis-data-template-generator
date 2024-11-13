@@ -6,8 +6,10 @@ import ChefsService from "../components/chefsService";
 import mapping from "../utils/mapping";
 import worksheetUtils from "../utils/worksheet";
 import env from "../utils/env";
-import { getCurrentFiscalAndPeriod } from "../utils/helper";
+import { getCurrentFiscalAndPeriod, getLatestS3Object } from "../utils/helper";
 import { getTemplateAsBuffer } from "../utils/s3";
+import client from "../components/minioService";
+import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 export default {
   generateTemplate: async (req: Request, res: Response, next: any) => {
@@ -19,13 +21,15 @@ export default {
 
       const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
 
-      // console.log("current fiscal", currentFiscalAndPeriod);
-      console.log("role", role);
+      console.log("current fiscal", currentFiscalAndPeriod);
+      // console.log("role", role);
+      console.info("data", data);
 
       if (
         role.role !== "admin" &&
         (data.fiscalYear !== currentFiscalAndPeriod.fiscalYear ||
-          data.reportingPeriod !== currentFiscalAndPeriod.period)
+          Number(data.reportingPeriod.substring(1)) !==
+            currentFiscalAndPeriod.period)
       ) {
         return res.status(403).send("Forbidden");
       }
@@ -67,12 +71,21 @@ export default {
         .flat(1);
 
       const bucket = env.MINIO_BUCKET || "";
+      const lresponse = await client.send(
+        new ListObjectsV2Command({ Bucket: bucket })
+      );
 
-      if (!env.TEMPLATE_ROUTE) {
-        throw new Error("Template route not found");
+      if (!lresponse.Contents) {
+        return res.status(200).send([]);
       }
 
-      const buffer = await getTemplateAsBuffer(bucket, env.TEMPLATE_ROUTE);
+      const latestFile = getLatestS3Object(lresponse.Contents);
+
+      if (!latestFile || !latestFile.Key) {
+        return res.status(404).send("Template not found");
+      }
+
+      const buffer = await getTemplateAsBuffer(bucket, latestFile.Key);
 
       if (!buffer) {
         throw new Error("Template not found");
@@ -111,7 +124,7 @@ export default {
         })
         .then((data: string | Uint8Array | ArrayBuffer | Blob | Buffer) => {
           // Set the output file name.
-          res.attachment("filled." + env.TEMPLATE_ROUTE);
+          res.attachment("filled." + latestFile.Key);
 
           // Send the workbook.
           res.send(data);
@@ -134,16 +147,15 @@ export default {
 
       const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
 
-      // console.log("current fiscal", currentFiscalAndPeriod);
+      console.log("current fiscal", currentFiscalAndPeriod);
       // console.log("role", role);
-
-      // const bucket = env.MINIO_BUCKET || "";
+      console.info("data", data);
 
       if (
         role.role !== "admin" &&
         (data.fiscalYear !== currentFiscalAndPeriod.fiscalYear ||
-          (data.fiscalYear === currentFiscalAndPeriod.fiscalYear &&
-            data.reportingPeriod !== currentFiscalAndPeriod.period))
+          Number(data.reportingPeriod.substring(1)) !==
+            currentFiscalAndPeriod.period)
       ) {
         return res.status(403).send("Forbidden");
       }

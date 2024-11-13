@@ -82,9 +82,9 @@ async function init() {
 /**
  * Logs user in
  */
-async function login() {
+async function login(redirectUri = window.location.href) {
   try {
-    await keycloak.login(loginOptions);
+    await keycloak.login({ ...loginOptions, redirectUri });
   } catch (error) {
     console.error("Keycloak login failed");
     console.error(error);

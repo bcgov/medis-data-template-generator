@@ -3,8 +3,13 @@ import Header from "./components/bcgov/Header.vue";
 import Nav from "./components/bcgov/Navbar.vue";
 import { Toaster } from "vue-sonner";
 import { computed, provide, ref } from "vue";
+import { useDialogStore } from "./stores/appStore";
+import { useAuthStore } from "./stores/authStore";
 
 const isWideLayout = ref(false);
+
+const dialogStore = useDialogStore();
+const authStore = useAuthStore();
 
 const appTitle = computed(() => {
   return import.meta.env.VITE_TITLE;
@@ -34,6 +39,23 @@ defineExpose({
       <Toaster richColors position="top-center" />
       <Header :app-title="appTitle" />
       <Nav />
+      <!-- Timed out dialog to log user back in -->
+      <v-dialog v-model="dialogStore.$state.isOpen" max-width="400" persistent>
+        <v-card :text="dialogStore.$state.message" :title="dialogStore.$state.title">
+          <template v-slot:actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="authStore.logout()"> Logout </v-btn>
+            <v-btn
+              @click="
+                authStore.refreshUserToken();
+                dialogStore.closeDialog();
+              "
+            >
+              Confirm
+            </v-btn>
+          </template>
+        </v-card>
+      </v-dialog>
       <!-- center the content in v-row -->
       <!-- <div class="container mx-auto my-4"> -->
       <div>
