@@ -50,7 +50,7 @@ const environment = import.meta.env.VITE_ENVIRONMENT || "local";
         id="roleButton"
         color="secondary"
         variant="plain"
-        v-if="authStore.authenticated"
+        v-if="authStore.authenticated && environment === 'dev'"
         readonly
       >
         ({{ environment }}) Role: {{ authStore.user.role }}
@@ -60,7 +60,7 @@ const environment = import.meta.env.VITE_ENVIRONMENT || "local";
         color="white"
         density="default"
         variant="outlined"
-        v-if="authStore.authenticated && environment === 'dev'"
+        v-if="authStore.authenticated"
         @click="authStore.logout()"
       >
         <span>Logout</span>
