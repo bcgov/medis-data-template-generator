@@ -4,8 +4,12 @@ import {
   SubmissionInitiative,
 } from "../../interfaces/FinancialSubmission";
 
-const formatValue = (value: any) => {
-  return value === undefined || value === null ? null : value;
+const formatValue = (value: any, trim?: boolean) => {
+  return value === undefined || value === null
+    ? null
+    : trim
+      ? String(value).trim()
+      : value;
 };
 
 export default {
@@ -165,7 +169,8 @@ export default {
             )
             .value(
               formatValue(
-                item.submissionInformation.budgetLevel.ytdExpenseVarianceNote
+                item.submissionInformation.budgetLevel.ytdExpenseVarianceNote,
+                true
               )
             );
           worksheet
@@ -175,7 +180,8 @@ export default {
             )
             .value(
               formatValue(
-                item.submissionInformation.budgetLevel.fyExpenseVarianceNote
+                item.submissionInformation.budgetLevel.fyExpenseVarianceNote,
+                true
               )
             );
         }
@@ -192,7 +198,7 @@ export default {
               constants[initiative.toUpperCase()].additionalNotes +
                 String(index)
             )
-            .value(formatValue(item.submissionInformation.notes));
+            .value(formatValue(item.submissionInformation.notes, true));
         }
         index = index + 1;
       }
@@ -362,7 +368,7 @@ export default {
               constants[initiative.toUpperCase() as Initiative]
                 .ytdExpenseVarianceNote + String(index)
             )
-            .value(formatValue(report.ytdExpenseVarianceNote));
+            .value(formatValue(report.ytdExpenseVarianceNote, true));
           worksheet
             .cell(
               constants[initiative.toUpperCase() as Initiative]
@@ -370,7 +376,8 @@ export default {
             )
             .value(
               formatValue(
-                report.fyExpenseVarianceNote || report.fyExpenseVarianceNote
+                report.fyExpenseVarianceNote || report.fyExpenseVarianceNote,
+                true
               )
             );
           worksheet
@@ -380,7 +387,8 @@ export default {
             )
             .value(
               formatValue(
-                item.submissionInformation.reasonForExceptionInPeriodReported
+                item.submissionInformation.reasonForExceptionInPeriodReported,
+                true
               )
             );
 
@@ -475,7 +483,7 @@ export default {
             // Needs clarification on the following fields
             worksheet
               .cell(constants.PCN.notes + String(index))
-              .value(formatValue(item.submissionInformation.notes));
+              .value(formatValue(item.submissionInformation.notes, true));
           } else {
             // Needs clarification on the following fields
             worksheet
@@ -484,7 +492,7 @@ export default {
                 constants[initiative.toUpperCase()].additionalNotes +
                   String(index)
               )
-              .value(formatValue(item.submissionInformation.notes));
+              .value(formatValue(item.submissionInformation.notes, true));
           }
           index = index + 1;
         });
