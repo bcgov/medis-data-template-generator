@@ -93,6 +93,13 @@ router.beforeEach(async (to, _from, next) => {
       if (role.length === 0) {
         throw new Error("User does not have a role or has multiple roles");
       }
+
+      role.forEach((r: any) => {
+        if (!r.role) {
+          throw new Error("Role not found");
+        }
+      });
+
       authStore.updateRole(role[0].role);
     } catch (error) {
       console.error("Error fetching RLS Role", error);
