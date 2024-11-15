@@ -81,24 +81,21 @@ router.beforeEach(async (to, _from, next) => {
     destination = "Login";
   }
 
-  if (authStore.authenticated && authStore.ready && !authStore.user.role) {
+  if (
+    to.meta.requiresAuth &&
+    authStore.authenticated &&
+    authStore.ready &&
+    !authStore.user.role
+  ) {
     try {
       const role = await apiService.getRole().then((res) => res.data);
       console.log(role);
       authStore.updateRole(role[0].role);
-      destination = "";
     } catch (error) {
       console.error("Error fetching RLS Role", error);
       authStore.updateRole("No Role");
+      destination = "NotInitialized";
     }
-  }
-
-  if (
-    authStore.authenticated &&
-    authStore.ready &&
-    authStore.user.role === "No Role"
-  ) {
-    destination = "NotInitialized";
   }
 
   // Update document title if applicable

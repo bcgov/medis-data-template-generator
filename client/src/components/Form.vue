@@ -278,10 +278,10 @@ const mutation = useMutation({
         reportingPeriod: String(selectedPeriod.value),
       })
       .then((data) => {
-        FileSaver.saveAs(
-          data.data,
-          `${initiative.value}${selectedHealthAuthority.value}${selectedPeriod.value}.xlsm`
-        );
+        const fileName = `${initiative.value}${selectedHealthAuthority.value}${
+          selectedPeriod.value
+        }${String(selectedFiscalYear.value)}`.replace(/[^a-z0-9_-]/gi, "_");
+        FileSaver.saveAs(data.data, `${fileName}.xlsm`);
         toast.success("Template downloaded successfully", {
           duration: 5000,
         });
