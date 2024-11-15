@@ -52,6 +52,8 @@ export const getRLSRole = async (payload: any) => {
         throw new Error("Error fetching RLS Role");
       });
 
+    console.log(response);
+
     if (response.length === 0) {
       throw new Error("User does not have a role or has multiple roles");
     }

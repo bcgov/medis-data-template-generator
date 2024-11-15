@@ -90,6 +90,9 @@ router.beforeEach(async (to, _from, next) => {
     try {
       const role = await apiService.getRole().then((res) => res.data);
       console.log(role);
+      if (role.length === 0) {
+        throw new Error("User does not have a role or has multiple roles");
+      }
       authStore.updateRole(role[0].role);
     } catch (error) {
       console.error("Error fetching RLS Role", error);
