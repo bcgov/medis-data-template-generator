@@ -183,7 +183,6 @@
       </v-row>
       <div class="d-flex flex-row w-25">
         <v-btn
-          v-if="environment === 'dev'"
           :color="isValid ? 'primary' : 'grey-lighten-1'"
           :variant="isValid ? 'flat' : 'plain'"
           :readonly="isPending || !isValid"
@@ -193,6 +192,7 @@
           @click="mutation.mutate"
         ></v-btn>
         <v-btn
+          v-if="environment === 'dev'"
           class="mr-2"
           :color="isValid ? 'secondary' : 'grey-lighten-1'"
           :variant="isValid ? 'flat' : 'plain'"
