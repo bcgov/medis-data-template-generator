@@ -5,8 +5,8 @@
         <v-card>
           <v-card-title class="headline">Not Authorized</v-card-title>
           <v-card-text>
-            You do not have permission to view this page. Please contact your
-            administrator for access.
+            You are not set up within MEDIS RLS, or the MEDIS RLS service is currently
+            unavailable. Please contact your administrator.
           </v-card-text>
         </v-card>
       </v-col>

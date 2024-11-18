@@ -194,9 +194,9 @@
         <v-btn
           v-if="environment === 'dev'"
           class="mr-2"
-          :color="isValid ? 'secondary' : 'grey-lighten-1'"
-          :variant="isValid ? 'flat' : 'plain'"
-          :readonly="isPending || !isValid"
+          color="secondary"
+          variant="flat"
+          :disabled="isPending || !isValid"
           :text="
             isPending || reportingPeriodsIsPending
               ? 'Loading...'
@@ -217,8 +217,9 @@ import FileSaver from "file-saver";
 import apiService from "../services/apiService";
 import { periods } from "../utils/enums/application";
 import { RLS } from "../utils/types/rls";
-import { InitiativeTypes, ReportingPeriods } from "../utils/types";
+import { InitiativeTypes } from "../utils/types";
 import { useAuthStore } from "../stores/authStore";
+import { getCurrentFiscalAndPeriod } from "../utils/helper";
 
 const environment = import.meta.env.VITE_ENVIRONMENT || "local";
 
@@ -235,11 +236,7 @@ const selectedRLSEntries = ref<RLS[]>([]);
 const selectedHealthAuthority = ref();
 const selectedPCNCommunity = ref();
 const selectedInitiativeName = ref();
-const selectedFiscalYear = ref(
-  new Date().getFullYear().toString() +
-    "/" +
-    (new Date().getFullYear() + 1).toString().substring(2, 4)
-);
+const selectedFiscalYear = ref();
 const selectedPeriod = ref();
 const initiative = ref<InitiativeTypes>(null);
 
@@ -281,10 +278,10 @@ const mutation = useMutation({
         reportingPeriod: String(selectedPeriod.value),
       })
       .then((data) => {
-        FileSaver.saveAs(
-          data.data,
-          `${initiative.value}${selectedHealthAuthority.value}${selectedPeriod.value}.xlsm`
-        );
+        const fileName = `${initiative.value}${selectedHealthAuthority.value}${
+          selectedPeriod.value
+        }${String(selectedFiscalYear.value)}`.replace(/[^a-z0-9_-]/gi, "_");
+        FileSaver.saveAs(data.data, `${fileName}.xlsm`);
         toast.success("Template downloaded successfully", {
           duration: 5000,
         });
@@ -351,25 +348,6 @@ watch(
   () => reportingPeriodsData.value,
   (newData) => {
     if (!newData || newData.data.length === 0) return;
-
-    const today = new Date();
-
-    newData.data
-      .find(
-        (fiscal: { fiscalYear: string; periodReportingDates: ReportingPeriods[] }) =>
-          fiscal.fiscalYear === selectedFiscalYear.value
-      )
-      .periodReportingDates.forEach((period: ReportingPeriods) => {
-        if (
-          today >= new Date(period.startDate) &&
-          today <= new Date(period.submissionDueDate) &&
-          period.period !== 14
-        ) {
-          selectedPeriod.value = `P${period.period}`;
-          return;
-        }
-      });
-
     fiscalYears.value = [
       ...new Set(
         newData && newData.data
@@ -378,7 +356,14 @@ watch(
             )
           : []
       ),
-    ].sort((a, b) => Number(a) - Number(b));
+    ]
+      .filter((item) => item !== "2022/23")
+      .sort((a, b) => Number(b.substring(5)) - Number(a.substring(5)));
+
+    const currentPeriodAndFiscal = getCurrentFiscalAndPeriod(newData.data);
+
+    selectedPeriod.value = `P${currentPeriodAndFiscal.period}`;
+    selectedFiscalYear.value = currentPeriodAndFiscal.fiscalYear;
   }
 );
 

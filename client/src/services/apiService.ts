@@ -22,6 +22,9 @@ export default {
   async getRole() {
     return (await apiAxios()).get("/role");
   },
+  async getLatestFinancialDataTemplate() {
+    return (await apiAxios()).get("/replace-template/financial/latest");
+  },
   async uploadFinancialDataTemplate(data: FormData) {
     return (await apiAxios()).post("/replace-template/financial", data, {
       headers: {

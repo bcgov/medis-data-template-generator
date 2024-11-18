@@ -11,7 +11,7 @@ export default {
       const response = await getRLSRole(res.locals.context);
       res.status(200).send(response);
     } catch (error) {
-      console.error("Error fetching RLS Health Authority Hierarchy", error);
+      console.error("Error fetching RLS Role", error);
       res.status(500).send("Internal Server Error");
     }
   },

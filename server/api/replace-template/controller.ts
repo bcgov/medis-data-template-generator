@@ -2,9 +2,42 @@ import { Request, Response } from "express";
 import env from "../utils/env";
 import { Readable } from "stream";
 import client from "../components/minioService";
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  PutObjectCommandInput,
+} from "@aws-sdk/client-s3";
+import { getLatestS3Object } from "../utils/helper";
 
 export default {
+  getLatestFinancialsTemplate: async (req: Request, res: Response) => {
+    try {
+      const role = res.locals.role;
+
+      if (!role.role || role.role !== "admin") {
+        return res.status(403).send("Forbidden");
+      }
+
+      const bucket = env.MINIO_BUCKET || "";
+
+      const response = await client.send(
+        new ListObjectsV2Command({ Bucket: bucket })
+      );
+
+      if (!response.Contents) {
+        return res.status(200).send([]);
+      }
+
+      const latestFile = getLatestS3Object(response.Contents);
+
+      return res.status(200).send(latestFile);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
   getFinancialsTemplate: async (req: Request, res: Response) => {
     try {
       const role = res.locals.role;
@@ -15,12 +48,22 @@ export default {
 
       const bucket = env.MINIO_BUCKET || "";
 
-      if (!env.TEMPLATE_ROUTE) {
-        throw new Error("Template route not found");
+      const lresponse = await client.send(
+        new ListObjectsV2Command({ Bucket: bucket })
+      );
+
+      if (!lresponse.Contents) {
+        return res.status(200).send([]);
+      }
+
+      const latestFile = getLatestS3Object(lresponse.Contents);
+
+      if (!latestFile) {
+        return res.status(404).send("Template not found");
       }
 
       const response = await client.send(
-        new GetObjectCommand({ Bucket: bucket, Key: env.TEMPLATE_ROUTE })
+        new GetObjectCommand({ Bucket: bucket, Key: latestFile.Key })
       );
 
       if (!response.Body) {
@@ -46,14 +89,19 @@ export default {
       }
 
       const bucket = env.MINIO_BUCKET || "";
-      const templateName = env.TEMPLATE_ROUTE || "";
 
       const formData = req.file.buffer;
+      const fileName = req.file.originalname;
 
-      const params = {
+      console.log("Template Name", req.file);
+
+      const params: PutObjectCommandInput = {
         Bucket: bucket,
-        Key: templateName,
+        Key: fileName,
         Body: formData,
+        Metadata: {
+          Type: "Financials Template",
+        },
       };
 
       await client.send(new PutObjectCommand(params));
