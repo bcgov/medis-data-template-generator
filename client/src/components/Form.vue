@@ -183,16 +183,16 @@
       </v-row>
       <div class="d-flex flex-row w-25">
         <v-btn
-          v-if="environment === 'dev'"
-          color="primary"
-          variant="flat"
-          :disabled="isPending || !isValid"
+          :color="isValid ? 'primary' : 'grey-lighten-1'"
+          :variant="isValid ? 'flat' : 'plain'"
+          :readonly="isPending || !isValid"
           :text="
             isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
           "
           @click="mutation.mutate"
         ></v-btn>
         <v-btn
+          v-if="environment === 'dev'"
           class="mr-2"
           color="secondary"
           variant="flat"
