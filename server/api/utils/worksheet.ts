@@ -186,12 +186,10 @@ export default {
             );
         }
         if (initiative === "pcn") {
-          // Needs clarification on the following fields
           worksheet
             .cell(constants.PCN.notes + String(index))
             .value(formatValue(item.submissionInformation.notes));
         } else {
-          // Needs clarification on the following fields
           worksheet
             .cell(
               // @ts-expect-error - TS doesn't know that initiative is a valid key for constants
@@ -200,6 +198,17 @@ export default {
             )
             .value(formatValue(item.submissionInformation.notes, true));
         }
+        worksheet
+          .cell(
+            constants[initiative.toUpperCase() as Initiative]
+              .reasonForExceptionInPeriodReported + String(index)
+          )
+          .value(
+            formatValue(
+              item.submissionInformation.reasonForExceptionInPeriodReported,
+              true
+            )
+          );
         index = index + 1;
       }
       if (item.reporting.length > 0) {
@@ -468,7 +477,6 @@ export default {
                 .value(formatValue(item.budget.totalBudgetAllocation));
             }
 
-            // Needs clarification on the following fields
             worksheet
               .cell(constants.PCN.otherItems + String(index))
               .value(formatValue(report.otherItems));
