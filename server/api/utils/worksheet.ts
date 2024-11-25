@@ -169,8 +169,7 @@ export default {
             )
             .value(
               formatValue(
-                item.submissionInformation.budgetLevel.ytdExpenseVarianceNote,
-                true
+                item.submissionInformation.budgetLevel.ytdExpenseVarianceNote
               )
             );
           worksheet
@@ -180,8 +179,7 @@ export default {
             )
             .value(
               formatValue(
-                item.submissionInformation.budgetLevel.fyExpenseVarianceNote,
-                true
+                item.submissionInformation.budgetLevel.fyExpenseVarianceNote
               )
             );
         }
@@ -198,7 +196,7 @@ export default {
               constants[initiative.toUpperCase()].additionalNotes +
                 String(index)
             )
-            .value(formatValue(item.submissionInformation.notes, true));
+            .value(formatValue(item.submissionInformation.notes));
         }
         index = index + 1;
       }
@@ -368,7 +366,7 @@ export default {
               constants[initiative.toUpperCase() as Initiative]
                 .ytdExpenseVarianceNote + String(index)
             )
-            .value(formatValue(report.ytdExpenseVarianceNote, true));
+            .value(formatValue(report.ytdExpenseVarianceNote));
           worksheet
             .cell(
               constants[initiative.toUpperCase() as Initiative]
@@ -376,8 +374,7 @@ export default {
             )
             .value(
               formatValue(
-                report.fyExpenseVarianceNote || report.fyExpenseVarianceNote,
-                true
+                report.fyExpenseVarianceNote || report.fyExpenseVarianceNote
               )
             );
           worksheet
@@ -387,8 +384,7 @@ export default {
             )
             .value(
               formatValue(
-                item.submissionInformation.reasonForExceptionInPeriodReported,
-                true
+                item.submissionInformation.reasonForExceptionInPeriodReported
               )
             );
 
@@ -483,7 +479,7 @@ export default {
             // Needs clarification on the following fields
             worksheet
               .cell(constants.PCN.notes + String(index))
-              .value(formatValue(item.submissionInformation.notes, true));
+              .value(formatValue(item.submissionInformation.notes));
           } else {
             // Needs clarification on the following fields
             worksheet
@@ -492,7 +488,7 @@ export default {
                 constants[initiative.toUpperCase()].additionalNotes +
                   String(index)
               )
-              .value(formatValue(item.submissionInformation.notes, true));
+              .value(formatValue(item.submissionInformation.notes));
           }
           index = index + 1;
         });

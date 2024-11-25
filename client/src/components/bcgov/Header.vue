@@ -50,10 +50,10 @@ const environment = import.meta.env.VITE_ENVIRONMENT || "local";
         id="roleButton"
         color="secondary"
         variant="plain"
-        v-if="authStore.authenticated && environment === 'dev'"
+        v-if="authStore.authenticated"
         readonly
       >
-        ({{ environment }}) Role: {{ authStore.user.role }}
+        Role: {{ authStore.user.role }}
       </v-btn>
       <v-btn
         id="loginButton"
