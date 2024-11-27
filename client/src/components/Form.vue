@@ -288,7 +288,7 @@ const mutation = useMutation({
         }${today.getDate()}.${today
           .getHours()
           .toString()
-          .padStart(2, "0")}${today.getMinutes()}`;
+          .padStart(2, "0")}${today.getMinutes().toString().padStart(2, "0")}`;
         FileSaver.saveAs(data.data, `${fileName}.xlsm`);
         toast.success("Template downloaded successfully", {
           duration: 5000,
