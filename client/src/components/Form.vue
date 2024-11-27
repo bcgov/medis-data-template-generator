@@ -283,9 +283,14 @@ const mutation = useMutation({
           haMapping[selectedHealthAuthority.value || "NotAvailable"]
         }.${initiative.value?.toUpperCase()}.FY${String(selectedFiscalYear.value)
           .substring(2)
-          .replace("/", "")}.${selectedPeriod.value}.${today.getFullYear()}${
+          .replace("/", "")}.${selectedPeriod.value}.${today.getFullYear()}${(
           today.getMonth() + 1
-        }${today.getDate()}.${today
+        )
+          .toString()
+          .padStart(2, "0")}${today
+          .getDate()
+          .toString()
+          .padStart(2, "0")}.${today
           .getHours()
           .toString()
           .padStart(2, "0")}${today.getMinutes().toString().padStart(2, "0")}`;
