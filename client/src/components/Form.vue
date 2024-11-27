@@ -217,7 +217,7 @@ import FileSaver from "file-saver";
 import apiService from "../services/apiService";
 import { periods } from "../utils/enums/application";
 import { RLS } from "../utils/types/rls";
-import { InitiativeTypes } from "../utils/types";
+import { HA, haMapping, InitiativeTypes } from "../utils/types";
 import { useAuthStore } from "../stores/authStore";
 import { getCurrentFiscalAndPeriod } from "../utils/helper";
 
@@ -233,7 +233,7 @@ const fiscalYears = ref<string[]>([]);
 
 // Reactive selected values
 const selectedRLSEntries = ref<RLS[]>([]);
-const selectedHealthAuthority = ref();
+const selectedHealthAuthority = ref<HA | undefined>();
 const selectedPCNCommunity = ref();
 const selectedInitiativeName = ref();
 const selectedFiscalYear = ref();
@@ -278,9 +278,14 @@ const mutation = useMutation({
         reportingPeriod: String(selectedPeriod.value),
       })
       .then((data) => {
-        const fileName = `${initiative.value}${selectedHealthAuthority.value}${
+        const today = new Date();
+        const fileName = `HLTH.FinRpt.${initiative.value?.toUpperCase()}.${
+          haMapping[selectedHealthAuthority.value || "NotAvailable"]
+        }.FY${String(selectedFiscalYear.value).substring(2).replace("/", "")}.${
           selectedPeriod.value
-        }${String(selectedFiscalYear.value)}`.replace(/[^a-z0-9_-]/gi, "_");
+        }.${today.getFullYear()}${
+          today.getMonth() + 1
+        }${today.getDate()}.${today.getHours()}${today.getMinutes()}`;
         FileSaver.saveAs(data.data, `${fileName}.xlsm`);
         toast.success("Template downloaded successfully", {
           duration: 5000,
@@ -337,7 +342,7 @@ watch(
   () => initiative.value,
   (newInitiative) => {
     if (!newInitiative) return;
-    selectedHealthAuthority.value = null;
+    selectedHealthAuthority.value = undefined;
     selectedPCNCommunity.value = [];
     selectedInitiativeName.value = [];
   }
