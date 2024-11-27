@@ -279,13 +279,16 @@ const mutation = useMutation({
       })
       .then((data) => {
         const today = new Date();
-        const fileName = `HLTH.FinRpt.${initiative.value?.toUpperCase()}.${
+        const fileName = `HLTH.FinRpt.${
           haMapping[selectedHealthAuthority.value || "NotAvailable"]
-        }.FY${String(selectedFiscalYear.value).substring(2).replace("/", "")}.${
-          selectedPeriod.value
-        }.${today.getFullYear()}${
+        }.${initiative.value?.toUpperCase()}.FY${String(selectedFiscalYear.value)
+          .substring(2)
+          .replace("/", "")}.${selectedPeriod.value}.${today.getFullYear()}${
           today.getMonth() + 1
-        }${today.getDate()}.${today.getHours()}${today.getMinutes()}`;
+        }${today.getDate()}.${today
+          .getHours()
+          .toString()
+          .padStart(2, "0")}${today.getMinutes()}`;
         FileSaver.saveAs(data.data, `${fileName}.xlsm`);
         toast.success("Template downloaded successfully", {
           duration: 5000,
