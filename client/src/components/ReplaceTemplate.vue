@@ -82,7 +82,7 @@ const mutation = useMutation({
       <h3>Financial template name: {{ data?.data.Key }}</h3>
       <h4>
         Last Modified:
-        {{ new Date(String(data?.data.LastModified)).toUTCString() }}
+        {{ new Date(String(data?.data.LastModified))}}
       </h4>
     </v-col>
     <v-skeleton-loader
