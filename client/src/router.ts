@@ -12,17 +12,17 @@ let isFirstTransition = true;
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: "/financial",
+    name: "Financial",
+    component: GenerateTemplate,
     meta: {
       requiresAuth: true,
     },
   },
   {
-    path: "/financial",
-    name: "Financial",
-    component: GenerateTemplate,
+    path: "/",
+    name: "Home",
+    component: Home,
     meta: {
       requiresAuth: true,
     },
@@ -58,7 +58,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   NProgress.start();
 
   let destination = "";
@@ -81,24 +81,31 @@ router.beforeEach(async (to, from, next) => {
     destination = "Login";
   }
 
-  if (authStore.authenticated && authStore.ready && !authStore.user.role) {
+  if (
+    to.meta.requiresAuth &&
+    authStore.authenticated &&
+    authStore.ready &&
+    !authStore.user.role
+  ) {
     try {
       const role = await apiService.getRole().then((res) => res.data);
       console.log(role);
+      if (role.length === 0) {
+        throw new Error("User does not have a role or has multiple roles");
+      }
+
+      role.forEach((r: any) => {
+        if (!r.role) {
+          throw new Error("Role not found");
+        }
+      });
+
       authStore.updateRole(role[0].role);
-      destination = "";
     } catch (error) {
       console.error("Error fetching RLS Role", error);
       authStore.updateRole("No Role");
+      destination = "NotInitialized";
     }
-  }
-
-  if (
-    authStore.authenticated &&
-    authStore.ready &&
-    authStore.user.role === "No Role"
-  ) {
-    destination = "NotInitialized";
   }
 
   // Update document title if applicable

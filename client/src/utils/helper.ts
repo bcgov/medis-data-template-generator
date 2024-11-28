@@ -1,12 +1,8 @@
-import { ReportingPeriods } from "../../interfaces/ReportingPeriods";
-import ChefsService from "../components/chefsService";
-import { _Object } from "@aws-sdk/client-s3";
+import { ReportingPeriods } from "./types";
 
-export async function getCurrentFiscalAndPeriod() {
+export function getCurrentFiscalAndPeriod(periods: any[]) {
   const currentFiscal = getCurrentFiscalYear();
   const previousFiscal = getPreviousFiscalYear();
-
-  const periods = await ChefsService().getReportingPeriod();
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set time to midnight to compare only dates
 
@@ -44,7 +40,6 @@ export async function getCurrentFiscalAndPeriod() {
   // in the case that nothing matches, default to the last period
   let validationPeriod = 13;
   let validationFiscalYear = currentFiscal;
-  let validationPeriodStartDate = "";
 
   allPeriods.forEach((period, index) => {
     let start = new Date(period.startDate);
@@ -60,7 +55,6 @@ export async function getCurrentFiscalAndPeriod() {
     if (today >= start && today <= end) {
       validationFiscalYear = period.fiscalYear;
       validationPeriod = period.period;
-      validationPeriodStartDate = period.startDate;
     }
   });
 
@@ -76,10 +70,10 @@ export async function getCurrentFiscalAndPeriod() {
 
 function getCurrentFiscalYear() {
   /*
-  This function works as per MoH fiscal year. You can change it according to your need. 
-  You only need to modify the conditional statement. 
-  i.e, if (curMonth > 3) where April(3) is the starting month of fiscal year.
-  getMonth() returns number of the month in a date value starting from 0 to 11*/
+    This function works as per MoH fiscal year. You can change it according to your need. 
+    You only need to modify the conditional statement. 
+    i.e, if (curMonth > 3) where April(3) is the starting month of fiscal year.
+    getMonth() returns number of the month in a date value starting from 0 to 11*/
 
   //get current date
   var today = new Date();
@@ -116,24 +110,4 @@ function getPreviousFiscalYear() {
   const prevYear2 = String(year2 - 1);
 
   return `${prevYear1}/${prevYear2.substring(2, 4)}`;
-}
-
-export function dateToNumber(date: string) {
-  return Number(date.split("-").join("").split("T")[0]);
-}
-
-export function getLatestS3Object(contents: _Object[]) {
-  const latestFile = contents?.reduce((prev, current) => {
-    if (!prev) {
-      return current;
-    }
-
-    if (current.LastModified && prev.LastModified) {
-      return current.LastModified > prev.LastModified ? current : prev;
-    }
-
-    return prev;
-  });
-
-  return latestFile;
 }

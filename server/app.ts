@@ -8,6 +8,7 @@ import { protectMiddleware } from "./middlewares/jwt";
 import router from "./api/routes";
 import { roleMiddleware } from "./middlewares/role";
 import env from "./api/utils/env";
+import limiter from "./middlewares/rateLimiter";
 
 require("dotenv").config();
 
@@ -29,8 +30,6 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-const staticFilesPath = process.env.FRONTEND_PATH || "/app";
-
 const app = express();
 
 app.use(
@@ -42,22 +41,13 @@ app.set("trust proxy", "loopback, linklocal, uniquelocal");
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(limiter);
 app.use("/api", protectMiddleware, roleMiddleware, router);
 
-app.use((req, res) => {
-  if (req.originalUrl.startsWith(`${process.env.API_BASEPATH}/api`)) {
-    // Return a 404 problem if attempting to access API
-    return res.status(404).json({
-      type: "https://httpstatuses.com/404",
-      title: "Not Found",
-      status: 404,
-      detail: "Resource not found",
-    });
-  } else {
-    // Redirect any non-API requests to static frontend with redirect breadcrumb
-    const query = new URLSearchParams({ ...req.query, r: req.path });
-    res.redirect(`${staticFilesPath}/?${query}`);
-  }
+app.get("/health-check", (_req, res) => {
+  res.json({
+    message: "Healthy!",
+  });
 });
 
 app.use(middlewares.notFound);

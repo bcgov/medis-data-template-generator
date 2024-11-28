@@ -24,7 +24,6 @@ export default {
   CHEFS_API_URL: process.env.CHEFS_API_URL,
   PORT: process.env.PORT,
   ENVIRONMENT: process.env.ENVIRONMENT,
-  TEMPLATE_ROUTE: process.env.TEMPLATE_ROUTE,
   JWKS_URI: process.env.JWKS_URI,
   RLS_API_URL: process.env.RLS_API_URL,
   RLS_HA_FORM_ID: process.env.RLS_HA_FORM_ID,
@@ -35,4 +34,6 @@ export default {
   MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
   MINIO_BUCKET: process.env.MINIO_BUCKET,
   MINIO_REGION: process.env.MINIO_REGION,
+  LIMIT: process.env.LIMIT,
+  LIMIT_WINDOW: process.env.LIMIT_WINDOW,
 };

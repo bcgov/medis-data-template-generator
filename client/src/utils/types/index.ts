@@ -28,3 +28,14 @@ export type OtherFinancialSubmission = {
 export type FinancialSubmission =
   | PCNFinancialSubmission
   | OtherFinancialSubmission;
+
+export const haMapping = {
+  Fraser: "FHA",
+  Interior: "IHA",
+  "Vancouver Island": "VIHA",
+  Northern: "NHA",
+  "Vancouver Coastal": "VCHA",
+  NotAvailable: "N-A",
+};
+
+export type HA = keyof typeof haMapping;

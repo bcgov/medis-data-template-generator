@@ -183,18 +183,6 @@
       </v-row>
       <div class="d-flex flex-row w-25">
         <v-btn
-          class="mr-2"
-          :color="isValid ? 'secondary' : 'grey-lighten-1'"
-          :variant="isValid ? 'flat' : 'plain'"
-          :readonly="isPending || !isValid"
-          :text="
-            isPending || reportingPeriodsIsPending
-              ? 'Loading...'
-              : 'Create Mappings (DEV only)'
-          "
-          @click="mappingMutation.mutate"
-        ></v-btn>
-        <v-btn
           :color="isValid ? 'primary' : 'grey-lighten-1'"
           :variant="isValid ? 'flat' : 'plain'"
           :readonly="isPending || !isValid"
@@ -202,6 +190,19 @@
             isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
           "
           @click="mutation.mutate"
+        ></v-btn>
+        <v-btn
+          v-if="environment === 'dev'"
+          class="mr-2"
+          color="secondary"
+          variant="flat"
+          :disabled="isPending || !isValid"
+          :text="
+            isPending || reportingPeriodsIsPending
+              ? 'Loading...'
+              : 'Create Mappings (DEV only)'
+          "
+          @click="mappingMutation.mutate"
         ></v-btn>
       </div>
     </v-container>
@@ -216,8 +217,11 @@ import FileSaver from "file-saver";
 import apiService from "../services/apiService";
 import { periods } from "../utils/enums/application";
 import { RLS } from "../utils/types/rls";
-import { InitiativeTypes, ReportingPeriods } from "../utils/types";
+import { HA, haMapping, InitiativeTypes } from "../utils/types";
 import { useAuthStore } from "../stores/authStore";
+import { getCurrentFiscalAndPeriod } from "../utils/helper";
+
+const environment = import.meta.env.VITE_ENVIRONMENT || "local";
 
 const authStore = useAuthStore();
 
@@ -229,14 +233,10 @@ const fiscalYears = ref<string[]>([]);
 
 // Reactive selected values
 const selectedRLSEntries = ref<RLS[]>([]);
-const selectedHealthAuthority = ref();
+const selectedHealthAuthority = ref<HA | undefined>();
 const selectedPCNCommunity = ref();
 const selectedInitiativeName = ref();
-const selectedFiscalYear = ref(
-  new Date().getFullYear().toString() +
-    "/" +
-    (new Date().getFullYear() + 1).toString().substring(2, 4)
-);
+const selectedFiscalYear = ref();
 const selectedPeriod = ref();
 const initiative = ref<InitiativeTypes>(null);
 
@@ -278,10 +278,23 @@ const mutation = useMutation({
         reportingPeriod: String(selectedPeriod.value),
       })
       .then((data) => {
-        FileSaver.saveAs(
-          data.data,
-          `${initiative.value}${selectedHealthAuthority.value}${selectedPeriod.value}.xlsm`
-        );
+        const today = new Date();
+        const fileName = `HLTH.FinRpt.${
+          haMapping[selectedHealthAuthority.value || "NotAvailable"]
+        }.${initiative.value?.toUpperCase()}.FY${String(selectedFiscalYear.value)
+          .substring(2)
+          .replace("/", "")}.${selectedPeriod.value}.${today.getFullYear()}${(
+          today.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}${today
+          .getDate()
+          .toString()
+          .padStart(2, "0")}.${today
+          .getHours()
+          .toString()
+          .padStart(2, "0")}${today.getMinutes().toString().padStart(2, "0")}`;
+        FileSaver.saveAs(data.data, `${fileName}.xlsm`);
         toast.success("Template downloaded successfully", {
           duration: 5000,
         });
@@ -337,7 +350,7 @@ watch(
   () => initiative.value,
   (newInitiative) => {
     if (!newInitiative) return;
-    selectedHealthAuthority.value = null;
+    selectedHealthAuthority.value = undefined;
     selectedPCNCommunity.value = [];
     selectedInitiativeName.value = [];
   }
@@ -348,25 +361,6 @@ watch(
   () => reportingPeriodsData.value,
   (newData) => {
     if (!newData || newData.data.length === 0) return;
-
-    const today = new Date();
-
-    newData.data
-      .find(
-        (fiscal: { fiscalYear: string; periodReportingDates: ReportingPeriods[] }) =>
-          fiscal.fiscalYear === selectedFiscalYear.value
-      )
-      .periodReportingDates.forEach((period: ReportingPeriods) => {
-        if (
-          today >= new Date(period.startDate) &&
-          today <= new Date(period.submissionDueDate) &&
-          period.period !== 14
-        ) {
-          selectedPeriod.value = `P${period.period}`;
-          return;
-        }
-      });
-
     fiscalYears.value = [
       ...new Set(
         newData && newData.data
@@ -375,7 +369,14 @@ watch(
             )
           : []
       ),
-    ].sort((a, b) => Number(a) - Number(b));
+    ]
+      .filter((item) => item !== "2022/23")
+      .sort((a, b) => Number(b.substring(5)) - Number(a.substring(5)));
+
+    const currentPeriodAndFiscal = getCurrentFiscalAndPeriod(newData.data);
+
+    selectedPeriod.value = `P${currentPeriodAndFiscal.period}`;
+    selectedFiscalYear.value = currentPeriodAndFiscal.fiscalYear;
   }
 );
 

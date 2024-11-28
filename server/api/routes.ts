@@ -13,10 +13,4 @@ router.use("/health-authority", healthAuthorityRouter);
 router.use("/replace-template", replaceTemplateRouter);
 router.use("/role", roleRouter);
 
-router.get("/health-check", (req, res) => {
-  res.json({
-    message: "Healthy!",
-  });
-});
-
 export default router;

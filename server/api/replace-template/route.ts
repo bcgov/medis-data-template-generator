@@ -10,6 +10,7 @@ const upload = multer({
   },
 });
 
+router.get("/financial/latest", controller.getLatestFinancialsTemplate);
 router.get("/financial", controller.getFinancialsTemplate);
 router.post(
   "/financial",

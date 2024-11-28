@@ -169,7 +169,7 @@ export default function ChefsService() {
     switch (data.typeOfInitiative) {
       case "pcn":
         const pcnFields =
-          "healthAuthority,communityName,fiscalYear,periodReported,financialData";
+          "healthAuthority,communityName,fiscalYear,periodReported,financialData,reasonForExceptionInPeriodReported";
         const pcnUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_PCN_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${pcnFields}`;
         const pcnResponse = await fetch(pcnUrl, {
           headers: {
@@ -216,7 +216,7 @@ export default function ChefsService() {
         return pcnReports;
       case "upcc":
         const upccFields =
-          "healthAuthority,communityName,upccName,fiscalYear,periodReported,financialData";
+          "healthAuthority,communityName,upccName,fiscalYear,periodReported,financialData,reasonForExceptionInPeriodReported";
         const upccUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_UPCC_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${upccFields}`;
         const upccResponse = await fetch(upccUrl, {
           headers: {
@@ -264,7 +264,7 @@ export default function ChefsService() {
         return upccReports;
       case "nppcc":
         const nppccFields =
-          "healthAuthority,communityName,nppccName,fiscalYear,periodReported,financialData";
+          "healthAuthority,communityName,nppccName,fiscalYear,periodReported,financialData,reasonForExceptionInPeriodReported";
         const nppccUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_NPPCC_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${nppccFields}`;
         const nppccResponse = await fetch(nppccUrl, {
           headers: {
@@ -312,7 +312,7 @@ export default function ChefsService() {
         return nppccReports;
       case "chc":
         const chcFields =
-          "healthAuthority,communityName,chcName,fiscalYear,periodReported,financialData";
+          "healthAuthority,communityName,chcName,fiscalYear,periodReported,financialData,reasonForExceptionInPeriodReported";
         const chcUrl = `${env.CHEFS_API_URL}/forms/${env.CHEFS_CHC_FINANCIAL_FORM_ID}/submissions?deleted=false&draft=false&fields=${chcFields}`;
         const chcResponse = await fetch(chcUrl, {
           headers: {

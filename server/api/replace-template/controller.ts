@@ -1,36 +1,76 @@
 import { Request, Response } from "express";
 import env from "../utils/env";
-import { getTemplateAsBuffer } from "../utils/s3";
+import { Readable } from "stream";
 import client from "../components/minioService";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  PutObjectCommandInput,
+} from "@aws-sdk/client-s3";
+import { getLatestS3Object } from "../utils/helper";
 
 export default {
-  getFinancialsTemplate: async (req: Request, res: Response) => {
+  getLatestFinancialsTemplate: async (req: Request, res: Response) => {
     try {
       const role = res.locals.role;
 
-      if (role.role !== "admin") {
+      if (!role.role || role.role !== "admin") {
         return res.status(403).send("Forbidden");
       }
 
       const bucket = env.MINIO_BUCKET || "";
 
-      if (!env.TEMPLATE_ROUTE) {
-        throw new Error("Template route not found");
+      const response = await client.send(
+        new ListObjectsV2Command({ Bucket: bucket })
+      );
+
+      if (!response.Contents) {
+        return res.status(200).send([]);
       }
 
-      const buffer = await getTemplateAsBuffer(bucket, env.TEMPLATE_ROUTE);
+      const latestFile = getLatestS3Object(response.Contents);
 
-      if (!buffer) {
+      return res.status(200).send(latestFile);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
+  getFinancialsTemplate: async (req: Request, res: Response) => {
+    try {
+      const role = res.locals.role;
+
+      if (!role.role || role.role !== "admin") {
+        return res.status(403).send("Forbidden");
+      }
+
+      const bucket = env.MINIO_BUCKET || "";
+
+      const lresponse = await client.send(
+        new ListObjectsV2Command({ Bucket: bucket })
+      );
+
+      if (!lresponse.Contents) {
+        return res.status(200).send([]);
+      }
+
+      const latestFile = getLatestS3Object(lresponse.Contents);
+
+      if (!latestFile) {
+        return res.status(404).send("Template not found");
+      }
+
+      const response = await client.send(
+        new GetObjectCommand({ Bucket: bucket, Key: latestFile.Key })
+      );
+
+      if (!response.Body) {
         throw new Error("Template not found");
       }
 
-      // const readableStream
-      const readableStream = await buffer.transformToByteArray();
-      res.attachment("filled." + env.TEMPLATE_ROUTE);
-
-      // Send the workbook.
-      res.send(readableStream);
+      (response.Body as Readable).pipe(res);
     } catch (error) {
       console.log(error);
       res.status(500).send("Internal Server Error");
@@ -40,7 +80,7 @@ export default {
     try {
       const role = res.locals.role;
 
-      if (role.role !== "admin") {
+      if (!role.role || role.role !== "admin") {
         return res.status(403).send("Forbidden");
       }
 
@@ -49,14 +89,19 @@ export default {
       }
 
       const bucket = env.MINIO_BUCKET || "";
-      const templateName = env.TEMPLATE_ROUTE || "";
 
       const formData = req.file.buffer;
+      const fileName = req.file.originalname;
 
-      const params = {
+      console.log("Template Name", req.file);
+
+      const params: PutObjectCommandInput = {
         Bucket: bucket,
-        Key: templateName,
+        Key: fileName,
         Body: formData,
+        Metadata: {
+          Type: "Financials Template",
+        },
       };
 
       await client.send(new PutObjectCommand(params));

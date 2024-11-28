@@ -32,12 +32,12 @@ const hasPrivileges = computed(() => authStore.user.role === "admin");
           >
         </li> -->
         <li>
-          <RouterLink data-cy="GenerateTemplateLinks" to="/"> Instructions </RouterLink>
-        </li>
-        <li>
           <RouterLink data-cy="GenerateTemplateLinks" to="/financial">
             Generate Financial Template
           </RouterLink>
+        </li>
+        <li>
+          <RouterLink data-cy="GenerateTemplateLinks" to="/"> Instructions </RouterLink>
         </li>
         <li v-if="hasPrivileges">
           <RouterLink data-cy="ReplaceBaseTemplate" to="/replace">

@@ -17,9 +17,8 @@ const pinia = createPinia();
 // Use persisted state with Pinia so our store data will persist even after page refresh
 pinia.use(piniaPluginPersistedstate);
 
-await KeycloakService.CallInit();
-
-const renderApp = () => {
+const renderApp = async () => {
+  await KeycloakService.CallInit();
   createApp(App)
     .use(AuthStorePlugin, { pinia })
     .use(pinia)
