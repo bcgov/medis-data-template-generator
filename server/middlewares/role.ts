@@ -6,10 +6,16 @@ export async function roleMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  const role = await getRLSRole(res.locals.context);
-  if (role.length === 0) {
-    next(new Error("User does not have a role"));
+  try {
+    const role = await getRLSRole(res.locals.context);
+    if (role.length === 0) {
+      return res.status(401).send("Unauthorized");
+    }
+    res.locals.role = role[0];
+  } catch (error) {
+    console.error("Error fetching RLS Role", error);
+    return res.status(500).send("Internal Server Error");
   }
-  res.locals.role = role[0];
+
   next();
 }
