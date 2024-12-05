@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { getRLSHealthAuthorityHierarchy } from "../components/rlsService";
+import chefsService from "../components/chefsService";
 
 export default {
-  getRLSHealthAuthorityHierarchy: async (
+  getRLSInstructions: async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -12,10 +12,11 @@ export default {
       if (!role) {
         return res.status(401).send("Unauthorized");
       }
-      const response = await getRLSHealthAuthorityHierarchy(res.locals.context);
+      // const response = await getInstructions();
+      const response = await chefsService().getInstructions();
       res.status(200).send(response);
     } catch (error) {
-      console.error("Error fetching RLS Health Authority Hierarchy", error);
+      console.error("Error fetching Instructions", error);
       res.status(500).send("Internal Server Error");
     }
   },

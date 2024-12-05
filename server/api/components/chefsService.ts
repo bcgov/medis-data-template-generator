@@ -2,6 +2,34 @@ import { FinancialSubmission } from "../../interfaces/FinancialSubmission";
 import env from "../utils/env";
 
 export default function ChefsService() {
+  const getInstructions = async () => {
+    try {
+      const fields = "instructions";
+      const url = `${env.CHEFS_API_URL}/forms/${env.CHEFS_INSTRUCTIONS_FORM_ID}/submissions?deleted=false&draft=false&fields=${fields}`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization:
+            "Basic " +
+            btoa(
+              env.CHEFS_INSTRUCTIONS_FORM_ID +
+                ":" +
+                env.CHEFS_INSTRUCTIONS_API_KEY
+            ),
+        },
+      })
+        .then((res) => res.json())
+        .catch((error) => {
+          console.error("Error fetching instructions", error);
+          throw new Error("Error fetching instructions");
+        });
+
+      return response;
+    } catch (error) {
+      console.error("Error fetching instructions", error);
+      throw new Error("Error fetching instructions");
+    }
+  };
   const getReportingPeriod = async () => {
     try {
       const fields = "fiscalYear,periodReportingDates";
@@ -364,6 +392,7 @@ export default function ChefsService() {
   };
 
   return {
+    getInstructions,
     getReportingPeriod,
     getBudgetSubmissionForFiscalYear,
     getReportingSubmissionsForFiscalYearAndPeriod,

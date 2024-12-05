@@ -21,10 +21,6 @@ export default {
 
       const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
 
-      console.log("current fiscal", currentFiscalAndPeriod);
-      // console.log("role", role);
-      console.info("data", data);
-
       if (
         role.role !== "admin" &&
         (data.fiscalYear !== currentFiscalAndPeriod.fiscalYear ||
@@ -146,10 +142,6 @@ export default {
       const role = res.locals.role;
 
       const currentFiscalAndPeriod = await getCurrentFiscalAndPeriod();
-
-      console.log("current fiscal", currentFiscalAndPeriod);
-      // console.log("role", role);
-      console.info("data", data);
 
       if (
         role.role !== "admin" &&

@@ -93,8 +93,6 @@ export default {
       const formData = req.file.buffer;
       const fileName = req.file.originalname;
 
-      console.log("Template Name", req.file);
-
       const params: PutObjectCommandInput = {
         Bucket: bucket,
         Key: fileName,

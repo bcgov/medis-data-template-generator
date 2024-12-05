@@ -8,7 +8,7 @@ export async function roleMiddleware(
 ) {
   try {
     const role = await getRLSRole(res.locals.context);
-    if (role.length === 0) {
+    if (role.length === 0 || !role[0].role) {
       return res.status(401).send("Unauthorized");
     }
     res.locals.role = role[0];

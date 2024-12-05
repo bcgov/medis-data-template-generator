@@ -113,8 +113,6 @@ export default {
         }
       }
 
-      console.log(reportingSubmission);
-
       return {
         submissionInformation: {
           healthAuthority: reportingSubmission.healthAuthority,

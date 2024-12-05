@@ -43,7 +43,10 @@ export async function protectMiddleware(
     res.locals.context = payload;
     next();
   } catch (error) {
-    if (String(error).includes("JWTExpired")) {
+    if (
+      String(error).includes("JWTExpired") ||
+      String(error).includes("JWSInvalid")
+    ) {
       console.log("Token expired");
       return res.status(401).send("Token expired");
     }

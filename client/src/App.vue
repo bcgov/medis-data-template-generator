@@ -41,13 +41,16 @@ defineExpose({
       <Nav />
       <!-- Timed out dialog to log user back in -->
       <v-dialog v-model="dialogStore.$state.isOpen" max-width="400" persistent>
-        <v-card :text="dialogStore.$state.message" :title="dialogStore.$state.title">
+        <v-card
+          :text="dialogStore.$state.message"
+          :title="dialogStore.$state.title"
+        >
           <template v-slot:actions>
             <v-spacer></v-spacer>
             <v-btn @click="authStore.logout()"> Logout </v-btn>
             <v-btn
               @click="
-                authStore.refreshUserToken();
+                authStore.login();
                 dialogStore.closeDialog();
               "
             >

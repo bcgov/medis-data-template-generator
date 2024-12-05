@@ -32,6 +32,9 @@ export default {
       },
     });
   },
+  async getInstructions() {
+    return (await apiAxios()).get("/instructions");
+  },
   async getCurrentFinancialDataTemplate() {
     return (await apiAxios()).get("/replace-template/financial", {
       responseType: "blob",
