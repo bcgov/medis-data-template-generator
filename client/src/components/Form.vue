@@ -211,19 +211,19 @@
         ></v-btn>
       </div>
     </v-container>
-    <v-container
-      v-if="!authStore.authenticated || authStore.user.role === 'No Role'"
-    >
+    <v-container v-if="!authStore.authenticated">
       <v-row justify="center">
         <v-col cols="12" md="8">
           <v-card>
-            <v-card-title class="headline">User Timed Out</v-card-title>
+            <v-card-title class="headline"
+              >User session invalidated, this is most likely due to CHEFS or RLS
+              user login.</v-card-title
+            >
             <v-btn
               color="primary"
               variant="flat"
-              text="
-            Login Again
-          "
+              class="mr-2"
+              text="Refresh Login"
               @click="authStore.login"
             ></v-btn>
           </v-card>
