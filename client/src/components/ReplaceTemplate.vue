@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import apiService from "../services/apiService";
 import FileSaver from "file-saver";
 import { toast } from "vue-sonner";
-const store = useAuthStore();
+const authStore = useAuthStore();
 const queryClient = useQueryClient();
 
 const file = ref<File | null>(null);
@@ -77,7 +77,7 @@ const mutation = useMutation({
 </script>
 
 <template>
-  <v-container fluid v-if="store.authenticated" class="p-4">
+  <v-container fluid v-if="authStore.authenticated" class="p-4">
     <v-col v-if="!isPending">
       <h3>Financial template name: {{ data?.data.Key }}</h3>
       <h4>
@@ -100,6 +100,25 @@ const mutation = useMutation({
       >
     </v-row>
   </v-container>
+  <v-container
+      v-if="!authStore.authenticated || authStore.user.role === 'No Role'"
+    >
+      <v-row justify="center">
+        <v-col cols="12" md="8">
+          <v-card>
+            <v-card-title class="headline">User Timed Out</v-card-title>
+            <v-btn
+              color="primary"
+              variant="flat"
+              text="
+            Login Again
+          "
+              @click="authStore.login"
+            ></v-btn>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
 </template>
 
 <style scoped></style>
