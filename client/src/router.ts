@@ -100,6 +100,10 @@ router.beforeEach(async (to, _from, next) => {
         }
       });
 
+      if (to.name === "NotInitialized") {
+        destination = "Financial";
+      }
+
       authStore.updateRole(role[0].role);
     } catch (error) {
       console.error("Error fetching RLS Role", error);
