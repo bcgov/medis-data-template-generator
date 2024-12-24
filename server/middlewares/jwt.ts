@@ -2,16 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import * as jose from "jose";
 import env from "../api/utils/env";
 
-const jwksUri = env.JWKS_URI || "";
-
-const JWKS = jose.createRemoteJWKSet(new URL(jwksUri));
-
 export function getBearerTokenFromHeader(authorization: string): string | null {
   const [, token] = authorization.split("Bearer ");
   return token || null;
 }
 
 export async function verifyToken(token: string): Promise<jose.JWTPayload> {
+  const jwksUri = env.JWKS_URI || "";
+
+  const JWKS = jose.createRemoteJWKSet(new URL(jwksUri));
   const { payload } = await jose.jwtVerify(token, JWKS, {});
   return payload;
 }
