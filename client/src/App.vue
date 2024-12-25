@@ -2,7 +2,7 @@
 import Header from "./components/bcgov/Header.vue";
 import Nav from "./components/bcgov/Navbar.vue";
 import { Toaster } from "vue-sonner";
-import { computed, provide, ref } from "vue";
+import { computed, provide, ref, watch } from "vue";
 import { useDialogStore } from "./stores/appStore";
 import { useAuthStore } from "./stores/authStore";
 
@@ -18,6 +18,18 @@ const appTitle = computed(() => {
 const isWidePage = computed(() => {
   return isWideLayout.value ? "main-wide" : "main";
 });
+
+watch(
+  () => authStore.authenticated,
+  (authenticated) => {
+    if (!authenticated) {
+      dialogStore.openDialog(
+        "Session Expired",
+        "Your session has expired. This is most likely due to CHEFS or RLS user login, please click Confirm to sync your session.",
+      );
+    }
+  }
+)
 
 provide("setWideLayout", setWideLayout);
 
@@ -47,7 +59,7 @@ defineExpose({
             <v-btn @click="authStore.logout()"> Logout </v-btn>
             <v-btn
               @click="
-                authStore.refreshUserToken();
+                authStore.login();
                 dialogStore.closeDialog();
               "
             >
