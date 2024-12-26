@@ -21,16 +21,28 @@ export async function apiAxios(
   const authStore = useAuthStore();
   const dialogStore = useDialogStore();
 
-  if (authStore.authenticated) {
-    authStore.refreshUserToken();
-    await KeycloakService.CallInitStore(authStore, false);
-    const token = await KeycloakService.CallGetToken();
+  try {
+    if (authStore.authenticated) {
+      await authStore.refreshUserToken();
+      await KeycloakService.CallInitStore(authStore, false);
+      const token = await KeycloakService.CallGetToken();
 
-    options.headers = {
-      Authorization: `Bearer ${token}`,
-    };
-  } else {
-    throw new Error("User is not authenticated");
+      options.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    } else {
+      throw new Error("User is not authenticated");
+    }
+  } catch (error) {
+    console.error("Error fetching token", error);
+    // This is in the case the user logs in in another tab, invalidating the current session
+    if (error === "Failed to get token") {
+      const dialogStore = useDialogStore();
+      dialogStore.openDialog(
+        "Session Expired",
+        "Your session has expired. This is most likely due to CHEFS or RLS user login, please click Confirm to sync your session."
+      );
+    }
   }
 
   const instance = axios.create({

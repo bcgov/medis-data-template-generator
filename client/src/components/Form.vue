@@ -211,25 +211,6 @@
         ></v-btn>
       </div>
     </v-container>
-    <v-container v-if="!authStore.authenticated">
-      <v-row justify="center">
-        <v-col cols="12" md="8">
-          <v-card>
-            <v-card-title class="headline"
-              >User session invalidated, this is most likely due to CHEFS or RLS
-              user login.</v-card-title
-            >
-            <v-btn
-              color="primary"
-              variant="flat"
-              class="mr-2"
-              text="Refresh Login"
-              @click="authStore.login"
-            ></v-btn>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
   </div>
 </template>
 

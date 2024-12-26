@@ -1,4 +1,5 @@
 import Keycloak from "keycloak-js";
+import { useDialogStore } from "../stores/appStore";
 
 const loginOptions = {
   redirectUri: import.meta.env.VITE_SSO_REDIRECT_URI,
