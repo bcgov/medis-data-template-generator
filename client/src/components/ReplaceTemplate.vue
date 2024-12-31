@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import apiService from "../services/apiService";
 import FileSaver from "file-saver";
 import { toast } from "vue-sonner";
-const store = useAuthStore();
+const authStore = useAuthStore();
 const queryClient = useQueryClient();
 
 const file = ref<File | null>(null);
@@ -13,9 +13,11 @@ const file = ref<File | null>(null);
 const { data, isPending } = useQuery({
   queryKey: ["financial-template"],
   queryFn: async () => {
-    const response = await apiService.getLatestFinancialDataTemplate().then((data) => {
-      return data;
-    });
+    const response = await apiService
+      .getLatestFinancialDataTemplate()
+      .then((data) => {
+        return data;
+      });
     return response;
   },
 });
@@ -77,12 +79,12 @@ const mutation = useMutation({
 </script>
 
 <template>
-  <v-container fluid v-if="store.authenticated" class="p-4">
+  <v-container fluid v-if="authStore.authenticated" class="p-4">
     <v-col v-if="!isPending">
       <h3>Financial template name: {{ data?.data.Key }}</h3>
       <h4>
         Last Modified:
-        {{ new Date(String(data?.data.LastModified)).toUTCString() }}
+        {{ new Date(String(data?.data.LastModified)) }}
       </h4>
     </v-col>
     <v-skeleton-loader
@@ -90,14 +92,43 @@ const mutation = useMutation({
       max-width="300"
       type="text,text"
     ></v-skeleton-loader>
-    <v-file-input v-model="file" label="Select a new financial template" accept=".xlsm" />
+    <v-file-input
+      v-model="file"
+      label="Select a new financial template"
+      accept=".xlsm"
+    />
     <v-row gap>
-      <v-btn @click="mutation.mutate()" color="primary" class="mr-2" :disabled="!file"
+      <v-btn
+        @click="mutation.mutate()"
+        color="primary"
+        class="mr-2"
+        :disabled="!file"
         >Replace Current Template</v-btn
       >
       <v-btn @click="getTemplateMutation.mutate()" variant="elevated"
         >Get Current Template</v-btn
       >
+    </v-row>
+  </v-container>
+  <v-container
+    v-if="!authStore.authenticated"
+  >
+    <v-row justify="center">
+      <v-col cols="12" md="8">
+        <v-card>
+          <v-card-title class="headline"
+            >User session invalidated, this is most likely due to CHEFS or RLS
+            user login.</v-card-title
+          >
+          <v-btn
+            color="primary"
+            variant="flat"
+            class="mr-2"
+            text="Refresh Login"
+            @click="authStore.login"
+          ></v-btn>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>

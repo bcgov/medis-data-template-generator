@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container
+      fluid
+      v-if="authStore.authenticated && authStore.user.role !== 'No Role'"
+    >
       <div v-if="!isPending && !reportingPeriodsIsPending">
         <div class="d-flex">
           <h6>Select the type of Initiative</h6>
@@ -187,7 +190,9 @@
           :variant="isValid ? 'flat' : 'plain'"
           :readonly="isPending || !isValid"
           :text="
-            isPending || reportingPeriodsIsPending ? 'Loading...' : 'Download Template'
+            isPending || reportingPeriodsIsPending
+              ? 'Loading...'
+              : 'Download Template'
           "
           @click="mutation.mutate"
         ></v-btn>
@@ -205,6 +210,25 @@
           @click="mappingMutation.mutate"
         ></v-btn>
       </div>
+    </v-container>
+    <v-container v-if="!authStore.authenticated">
+      <v-row justify="center">
+        <v-col cols="12" md="8">
+          <v-card>
+            <v-card-title class="headline"
+              >User session invalidated, this is most likely due to CHEFS or RLS
+              user login.</v-card-title
+            >
+            <v-btn
+              color="primary"
+              variant="flat"
+              class="mr-2"
+              text="Refresh Login"
+              @click="authStore.login"
+            ></v-btn>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -261,10 +285,11 @@ const { isPending, data } = useQuery({
     return response;
   },
 });
-const { isPending: reportingPeriodsIsPending, data: reportingPeriodsData } = useQuery({
-  queryKey: ["reporting-periods"],
-  queryFn: () => apiService.getReportingPeriods(),
-});
+const { isPending: reportingPeriodsIsPending, data: reportingPeriodsData } =
+  useQuery({
+    queryKey: ["reporting-periods"],
+    queryFn: () => apiService.getReportingPeriods(),
+  });
 const mutation = useMutation({
   // data sent back is a blob to be saved as a file
   mutationFn: () =>
@@ -281,7 +306,9 @@ const mutation = useMutation({
         const today = new Date();
         const fileName = `HLTH.FinRpt.${
           haMapping[selectedHealthAuthority.value || "NotAvailable"]
-        }.${initiative.value?.toUpperCase()}.FY${String(selectedFiscalYear.value)
+        }.${initiative.value?.toUpperCase()}.FY${String(
+          selectedFiscalYear.value
+        )
           .substring(2)
           .replace("/", "")}.${selectedPeriod.value}.${today.getFullYear()}${(
           today.getMonth() + 1
@@ -407,7 +434,9 @@ watch(
             .map((entry) => entry)
         : [];
     pcnCommunities.value = [
-      ...new Set(selectedRLSEntries.value.map((ha) => String(ha.communityName))),
+      ...new Set(
+        selectedRLSEntries.value.map((ha) => String(ha.communityName))
+      ),
     ];
   }
 );

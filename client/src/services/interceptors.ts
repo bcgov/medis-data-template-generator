@@ -35,7 +35,7 @@ export async function apiAxios(
 
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "/api",
-    timeout: 10000,
+    timeout: 100000,
     ...options,
   });
 
