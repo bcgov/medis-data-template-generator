@@ -5,8 +5,8 @@
         <v-card>
           <v-card-title class="headline">Not Authorized</v-card-title>
           <v-card-text>
-            You are not set up within MEDIS RLS, or the MEDIS RLS service is currently
-            unavailable. Please contact your administrator.
+            Problems with the RLS Service. If you recently updated your role, please wait for up to 5 minutes before refreshing the app.
+            If the issue persists, please contact your administrator.
           </v-card-text>
         </v-card>
       </v-col>

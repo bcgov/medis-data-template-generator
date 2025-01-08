@@ -43,7 +43,11 @@ const environment = import.meta.env.VITE_ENVIRONMENT || "local";
       >
         {{ props.appTitle }}
       </h2>
-      <sup class="font-weight-bold text-uppercase ml-1 sup">{{ environment }}</sup>
+      <sup
+        class="font-weight-bold text-uppercase ml-1 sup"
+        v-if="environment !== 'production'"
+        >{{ environment }}</sup
+      >
       <v-spacer />
       <v-btn
         class="mr-1"

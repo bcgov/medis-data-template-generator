@@ -113,8 +113,6 @@ export default {
         }
       }
 
-      console.log(reportingSubmission);
-
       return {
         submissionInformation: {
           healthAuthority: reportingSubmission.healthAuthority,
@@ -139,16 +137,28 @@ export default {
               budget.expenseCategory === report.expenseCategory &&
               budget.expenseSubCategory === report.expenseSubCategory
             ) {
-              if (!budget.expenseItem && !budget.expenseItemSubType) {
-                return true;
-              } else if (
-                budget.expenseItem === report.expenseItem &&
-                !budget.expenseItemSubType
+              if (
+                !budget.expenseItem &&
+                !budget.expenseItemSubType &&
+                (initiative === "upcc"
+                  ? budget.typeOfCare === report.typeOfCare
+                  : true)
               ) {
                 return true;
               } else if (
                 budget.expenseItem === report.expenseItem &&
-                budget.expenseItemSubType === report.expenseItemSubType
+                !budget.expenseItemSubType &&
+                (initiative === "upcc"
+                  ? budget.typeOfCare === report.typeOfCare
+                  : true)
+              ) {
+                return true;
+              } else if (
+                budget.expenseItem === report.expenseItem &&
+                budget.expenseItemSubType === report.expenseItemSubType &&
+                (initiative === "upcc"
+                  ? budget.typeOfCare === report.typeOfCare
+                  : true)
               ) {
                 return true;
               } else {
