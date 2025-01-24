@@ -1,0 +1,62 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"medis-data-template-frontend"}]'
+    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"medis-data-template-backend:${IMAGE_TAG}","namespace":"${TOOLS_NAMESPACE}"},"fieldPath":"spec.template.spec.containers[?(@.name==\"medis-data-template-backend\")].image","pause":"false"}]'
+  name: medis-data-template-backend
+  labels:
+    app: medis-data-template-backend
+    app.kubernetes.io/component: medis-data-template-backend
+    app.kubernetes.io/instance: medis-data-template-backend
+    app.kubernetes.io/name: medis-data-template-backend
+    app.kubernetes.io/part-of: medis-data-template-frontend-app
+    app.openshift.io/runtime: nodejs
+    app.openshift.io/runtime-version: latest
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: medis-data-template-backend
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: medis-data-template-backend
+        deployment: medis-data-template-backend
+    spec:
+      containers:
+        - resources: {}
+          readinessProbe:
+            httpGet:
+              path: /health-check
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: medis-data-template-backend
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          terminationMessagePolicy: File
+          envFrom:
+            - secretRef:
+                name: medis-data-template-secret
+          image: 'image-registry.openshift-image-registry.svc:5000/ee981c-tools/medis-data-template-backend:${ENVIRONMENT}'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
