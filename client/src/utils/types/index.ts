@@ -35,6 +35,7 @@ export const haMapping = {
   "Vancouver Island": "VIHA",
   Northern: "NHA",
   "Vancouver Coastal": "VCHA",
+  "Nisga'a Valley": "NVHA",
   NotAvailable: "N-A",
 };
 
