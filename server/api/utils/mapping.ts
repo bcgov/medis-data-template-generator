@@ -83,7 +83,8 @@ export default {
 
     iterate(reportingData);
 
-    // console.log(financials);
+    console.log("budget data",budgetData);
+    console.log("financials",reportingSubmission.financialData);
 
     // If there is a submission but there are no financials associated with the budget, return the period so signify there is a submission.
     const budgetToFinancials = budgetData.map((budget: any) => {
@@ -94,12 +95,12 @@ export default {
         budget.expenseItem !== "Change Management" &&
         budget.expenseSubCategory === "Overhead"
       ) {
-        budgetLevel = reportingSubmission.financialData.dofp.overhead.budget;
+        budgetLevel = reportingSubmission?.financialData?.dofp?.overhead?.budget ?? {};
       } else if (
         budget.expenseCategory === "Division Of Family Practice" &&
         budget.expenseItem === "Change Management"
       ) {
-        budgetLevel = reportingSubmission.financialData.changeManagement.budget;
+        budgetLevel = reportingSubmission?.financialData?.changeManagement?.budget ?? {};
       } else if (
         budget.expenseCategory === "Health Authority" &&
         budget.expenseItem !== "Change Management" &&
@@ -107,9 +108,9 @@ export default {
       ) {
         if (initiative === "pcn") {
           budgetLevel =
-            reportingSubmission.financialData.healthAuthority.overhead.budget;
+            reportingSubmission?.financialData?.healthAuthority?.overhead?.budget ?? {};
         } else {
-          budgetLevel = reportingSubmission.financialData.overhead.budget;
+          budgetLevel = reportingSubmission?.financialData?.overhead?.budget ?? {};
         }
       }
 
