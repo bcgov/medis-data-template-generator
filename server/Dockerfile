@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.16
+FROM node:18.20.7-alpine3.21
 ENV NODE_ENV production
 
 RUN mkdir -p /usr/src/app
