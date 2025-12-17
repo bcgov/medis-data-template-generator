@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import keycloakService from "../services/keycloak";
 
-export const useAuthStore = defineStore({
-  id: "storeAuth",
+export const useAuthStore = defineStore("storeAuth", {
   state: () => {
     return {
       authenticated: false,
