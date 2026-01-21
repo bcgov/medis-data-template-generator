@@ -36,6 +36,7 @@ export const haMapping = {
   Northern: "NHA",
   "Vancouver Coastal": "VCHA",
   "Nisga'a Valley": "NVHA",
+  "Indigenous-Led Primary Care Initiative": "ILPCI",
   NotAvailable: "N-A",
 };
 
