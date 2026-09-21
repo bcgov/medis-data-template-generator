@@ -1,5 +1,5 @@
-FROM node:lts-alpine3.16
-ENV NODE_ENV production
+FROM node:24-alpine
+ENV NODE_ENV=production
 
 RUN mkdir -p /usr/src/app
 
