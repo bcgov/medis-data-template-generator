@@ -5,7 +5,9 @@ import {
 } from "../../interfaces/FinancialSubmission";
 
 const formatValue = (value: any, trim?: boolean) => {
-  return value === undefined || value === null
+  return value === undefined ||
+    value === null ||
+    (value.constructor === Object && Object.keys(value).length === 0)
     ? null
     : trim
       ? String(value).trim()
