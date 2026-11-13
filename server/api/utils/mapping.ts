@@ -1,3 +1,9 @@
+// The UPCC Budget form omits typeOfCare on overhead items, while the Reporting form sends "N/A".
+const normalizeTypeOfCare = (value: unknown) =>
+  value === undefined || value === null || value === "" || value === "N/A"
+    ? null
+    : value;
+
 export default {
   // Maps 2 submissions with each other, they are withing the parameters provided in the request.
   mapBudgetAndFinancialSubmissions(
@@ -135,6 +141,10 @@ export default {
         budget: budget,
         reporting: financials
           .filter((report: any) => {
+            const typeOfCareMatches =
+              initiative !== "upcc" ||
+              normalizeTypeOfCare(budget.typeOfCare) ===
+                normalizeTypeOfCare(report.typeOfCare);
             if (
               budget.expenseCategory === report.expenseCategory &&
               budget.expenseSubCategory === report.expenseSubCategory
@@ -142,9 +152,7 @@ export default {
               if (
                 !budget.expenseItem &&
                 !budget.expenseItemSubType &&
-                (initiative === "upcc"
-                  ? budget.typeOfCare === report.typeOfCare
-                  : true)
+                typeOfCareMatches
               ) {
                 return true;
               } else if (
@@ -157,17 +165,13 @@ export default {
                 budget.expenseItem === report.expenseItem &&
                 !budget.expenseItemSubType &&
                 !report.expenseItemSubType &&
-                (initiative === "upcc"
-                  ? budget.typeOfCare === report.typeOfCare
-                  : true)
+                typeOfCareMatches
               ) {
                 return true;
               } else if (
                 budget.expenseItem === report.expenseItem &&
                 budget.expenseItemSubType === report.expenseItemSubType &&
-                (initiative === "upcc"
-                  ? budget.typeOfCare === report.typeOfCare
-                  : true)
+                typeOfCareMatches
               ) {
                 return true;
               } else {
