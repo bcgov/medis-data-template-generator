@@ -10,5 +10,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./*.js", "./**/*.ts", "test/**/*.ts"]
+  "include": ["./*.js", "./**/*.ts"],
+  "exclude": ["node_modules", "dist", "test", "vitest.config.ts"]
 }
