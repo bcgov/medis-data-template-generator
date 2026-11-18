@@ -11,7 +11,6 @@
     "build": "tsc",
     "start:dist": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run",
     "test:repeat": "vitest run --sequence.shuffle && vitest run --sequence.shuffle"
   },
