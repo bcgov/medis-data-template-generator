@@ -161,13 +161,6 @@ export default {
               budget.expenseCategory === report.expenseCategory &&
               budget.expenseSubCategory === report.expenseSubCategory
             ) {
-              // Overhead is one pooled budget amount; the report breaks it
-              // into many lines (Building/Lease, Salary/MOA, ...). Whatever
-              // is in the budget's item, sub-type or type of care cells, every
-              // reported line of the same category belongs to it.
-              if (budget.expenseSubCategory === "Overhead") {
-                return true;
-              }
               if (
                 !budget.expenseItem &&
                 !budgetSubType &&

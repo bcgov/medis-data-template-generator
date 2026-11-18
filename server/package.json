@@ -10,9 +10,7 @@
     "dev": "nodemon index.ts",
     "build": "tsc",
     "start:dist": "node dist/index.js",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:repeat": "vitest run --sequence.shuffle && vitest run --sequence.shuffle"
+    "typecheck": "tsc --noEmit"
   },
   "author": "",
   "license": "ISC",
@@ -39,7 +37,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.6",
-    "prettier": "^3.3.3",
-    "vitest": "^3.2.4"
+    "prettier": "^3.3.3"
   }
 }
